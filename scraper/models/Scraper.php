@@ -55,7 +55,19 @@ class Scraper {
 
     private function _parseFilmListPage($pageFilms, $page) {
 
-        //$html = str_get_html($page);
+        $html = str_get_html($pageFilms);
+        foreach($html->find('.fa-shadow') as $filmHtml) {
+
+            $film = array();
+            $film['position'] = $filmHtml->find('.position', 0)->plaintext;
+            $film['id'] = $filmHtml->find('.movie-card', 0)->getAttribute('data-movie-id');
+            $film['image'] = $filmHtml->find('.mc-poster', 0)->find('img', 0)->getAttribute('src');
+            $film['name'] = trim($filmHtml->find('.mc-title', 0)->find('a', 0)->plaintext);
+            $film['link'] = $filmHtml->find('.mc-title', 0)->find('a', 0)->getAttribute('href');
+
+            Functions::log($film['link']);
+
+        }
 
     }
 
