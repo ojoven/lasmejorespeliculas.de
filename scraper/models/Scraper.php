@@ -19,7 +19,7 @@ class Scraper {
             $this->_storeHtmlFilmListPage($pageFilms, $page);
             $this->_parseFilmListPage($pageFilms, $page);
 
-            if ($page>=4) break; // Limit for initial testing
+            //if ($page>=12) break; // Limit for initial testing
 
             $page++;
 
