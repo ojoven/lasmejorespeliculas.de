@@ -9,19 +9,146 @@ class Scraper {
 
         $numPages = 1090; // This number we've got after having run scrapeFilmList()
         for ($page = 1; $page <= $numPages; $page++) {
+
+            Functions::log(PHP_EOL . "Page " . $page);
+            Functions::log("========================");
             $pageFilms = $this->_retrieveFilmListPage($page);
             $films = $this->_parseFilmListPage($pageFilms);
 
             foreach ($films as $film) {
 
+                Functions::log("Retrieving HTML for film " . $film['id']);
+                Functions::log($film['name'] . PHP_EOL);
+
                 $filmHtml = $this->_retrieveFilmSingleHtml($film['id']);
-                Functions::log($filmHtml);
-                //$this->_storeHtmlFilmSingleHtml($filmHtml, $film['id']);
-                break 2;
+                $this->_storeHtmlFilmSingleHtml($filmHtml, $film['id']);
+                $this->parseFilmSingle($filmHtml, $film['id']);
 
             }
 
         }
+
+    }
+
+    public function parseFilmSingle($filmHtml, $id) {
+
+        $filmsPage = array();
+        $html = str_get_html($filmHtml);
+
+        //$film['position'] = $filmHtml->find('.position', 0)->plaintext;
+        $film['id'] = $id;
+        $film['image'] = $html->find('#movie-main-image-container', 0)->find('img', 0)->getAttribute('src');
+        $film['name'] = trim($html->find('#main-title', 0)->find('span', 0)->plaintext);
+
+        $movieInfos = $html->find('.movie-info');
+
+        foreach ($movieInfos as $movieInfo) {
+
+            foreach ($movieInfo->find('dt') as $dt) {
+
+                switch($dt->plaintext) {
+
+                    case 'Título original':
+                        $film['original_name'] = trim($dt->next_sibling()->plaintext);
+                        break;
+
+                    case 'AKA':
+                        $film['akas'] = array();
+                        foreach ($dt->next_sibling()->find('li') as $aka) {
+                            array_push($film['akas'], $aka->plaintext);
+                        }
+                        break;
+
+                    case 'Año':
+                        $film['year'] = trim($dt->next_sibling()->plaintext);
+                        break;
+
+                    case 'Duración':
+                        $film['duration'] = trim(str_replace("min.", "", $dt->next_sibling()->plaintext));
+                        break;
+
+                    case 'País':
+                        $film['country'] = trim(str_replace("&nbsp;", "", $dt->next_sibling()->plaintext));
+                        break;
+
+                    case 'Director':
+                        $film['directors'] = array();
+                        foreach ($dt->next_sibling()->children() as $director) {
+                            array_push($film['directors'], trim($director->find('span',0)->plaintext));
+                        }
+                        $film['director_string'] = implode(", ", $film['directors']);
+                        break;
+
+                    case 'Guión':
+                        $film['script'] = trim($dt->next_sibling()->plaintext);
+                        break;
+
+                    case 'Música':
+                        $film['music'] = trim($dt->next_sibling()->plaintext);
+                        break;
+
+                    case 'Fotografía':
+                        $film['photo'] = trim($dt->next_sibling()->plaintext);
+                        break;
+
+                    case 'Reparto':
+                        $film['actors'] = array();
+                        foreach ($dt->next_sibling()->children() as $actor) {
+                            array_push($film['actors'], trim($actor->plaintext));
+                        }
+                        break;
+
+                    case 'Productora':
+                        $film['producer'] = trim($dt->next_sibling()->plaintext);
+                        break;
+
+                    case 'Género':
+                        $film['genres'] = array();
+                        foreach ($dt->next_sibling()->find('a') as $genre) {
+                            array_push($film['genres'], trim($genre->plaintext));
+                        }
+                        break;
+
+                    case 'Sinopsis':
+                        $film['synopsis'] = trim($dt->next_sibling()->plaintext);
+                        break;
+
+                    case 'Premios':
+                        $film['prizes'] = array();
+                        foreach ($dt->next_sibling()->find('div') as $prize) {
+                            if (strpos($prize->plaintext, "Mostrar")===FALSE) {
+                                array_push($film['prizes'], trim($prize->plaintext));
+                            }
+                        }
+                        break;
+
+                    case 'Críticas':
+                        $film['reviews']['pro'] = array();
+                        foreach ($dt->next_sibling()->find('li') as $review) {
+                            $reviewFilm['review'] = trim(str_replace("&nbsp;", "", $review->first_child()->find('div', 0)->plaintext));
+                            $author = trim($review->find('.pro-crit-med', 0)->plaintext);
+                            $author = explode(":", $author);
+                            if (isset($author[0])) $reviewFilm['author'] = trim($author[0]);
+                            if (isset($author[1])) $reviewFilm['media'] = trim($author[1]);
+                            array_push($film['reviews']['pro'], $reviewFilm);
+                        }
+                        break;
+                }
+
+            }
+
+        }
+
+
+        if (count($film['prizes'])>0) {
+            Functions::log(print_r($film));
+        }
+
+        //$film['name'] = trim($filmHtml->find('.mc-title', 0)->find('a', 0)->plaintext);
+        //$film['link'] = $filmHtml->find('.mc-title', 0)->find('a', 0)->getAttribute('href');
+
+
+        return $film;
 
     }
 
@@ -42,14 +169,13 @@ class Scraper {
         $firstChar = $id[0];
 
         // No documentaries nor TV series
-        $url = "http://http://www.filmaffinity.com/es/film" . $id . ".html";
-        Functions::log($url);
+        $url = "http://www.filmaffinity.com/es/film" . $id . ".html";
 
         $pageSingleFilmPath = SCRAPER_ROOT_PATH . "/htmls/films/" . $firstChar . "/" . $id . ".html";
         if (file_exists($pageSingleFilmPath)) {
             $filmHtml = file_get_contents($pageSingleFilmPath);
         } else {
-            $filmHtml = file_get_contents($url);
+            $filmHtml = Functions::getURL($url, array());
         }
 
         return $filmHtml;
@@ -127,7 +253,6 @@ class Scraper {
             $film['name'] = trim($filmHtml->find('.mc-title', 0)->find('a', 0)->plaintext);
             $film['link'] = $filmHtml->find('.mc-title', 0)->find('a', 0)->getAttribute('href');
 
-            Functions::log($film['link']);
             array_push($filmsPage, $film);
 
         }
