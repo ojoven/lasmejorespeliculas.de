@@ -1,6 +1,8 @@
 <?php
+require_once __DIR__. '/../config.php';
 require_once __DIR__. '/../lib/Functions.php';
 require_once __DIR__. '/../lib/vendor/simple_html_dom.php';
+require_once __DIR__. '/../lib/vendor/db.php';
 
 class Scraper {
 
@@ -22,7 +24,8 @@ class Scraper {
 
                 $filmHtml = $this->_retrieveFilmSingleHtml($film['id']);
                 $this->_storeHtmlFilmSingleHtml($filmHtml, $film['id']);
-                $this->parseFilmSingle($filmHtml, $film['id']);
+                $filmObject = $this->parseFilmSingle($filmHtml, $film['id']);
+                $this->_saveFilmDB($filmObject);
 
             }
 
@@ -32,7 +35,6 @@ class Scraper {
 
     public function parseFilmSingle($filmHtml, $id) {
 
-        $filmsPage = array();
         $html = str_get_html($filmHtml);
 
         //$film['position'] = $filmHtml->find('.position', 0)->plaintext;
@@ -126,12 +128,24 @@ class Scraper {
                     case 'Críticas':
                         $film['reviews']['pro'] = array();
                         foreach ($dt->next_sibling()->find('li') as $review) {
+                            if (!$review->first_child()->find('div', 0)) break;
                             $reviewFilm['review'] = trim(str_replace("&nbsp;", "", $review->first_child()->find('div', 0)->plaintext));
+                            // Author and media
                             $author = trim($review->find('.pro-crit-med', 0)->plaintext);
                             $author = explode(":", $author);
                             if (isset($author[0])) $reviewFilm['author'] = trim($author[0]);
                             if (isset($author[1])) $reviewFilm['media'] = trim($author[1]);
+
+                            // Rating
+                            $ratingI = $review->first_child()->find('.pro-crit-med', 0)->find('i', 0)->getAttribute('alt');
+                            if (strpos($ratingI, "no crítica")) $rating = 0;
+                            if (strpos($ratingI, "negativa")) $rating = 1;
+                            if (strpos($ratingI, "neutral")) $rating = 2;
+                            if (strpos($ratingI, "positiva")) $rating = 3;
+                            if (isset($rating)) $reviewFilm['rating'] = $rating;
+
                             array_push($film['reviews']['pro'], $reviewFilm);
+
                         }
                         break;
                 }
@@ -140,16 +154,24 @@ class Scraper {
 
         }
 
-
-        if (count($film['prizes'])>0) {
-            Functions::log(print_r($film));
-        }
-
-        //$film['name'] = trim($filmHtml->find('.mc-title', 0)->find('a', 0)->plaintext);
-        //$film['link'] = $filmHtml->find('.mc-title', 0)->find('a', 0)->getAttribute('href');
-
+        Functions::log(print_r($film['reviews']['pro']));
 
         return $film;
+
+    }
+
+    private function _saveFilmDB($film) {
+
+        $db = new Database(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
+
+        // Films table
+        $filmDb = $film;
+        $relations = array('reviews', 'prizes', 'cast', 'directors', 'genres', 'akas');
+        foreach ($relations as $relation) {
+            unset($filmDb[$relation]);
+        }
+
+        Functions::insertDB($db, 'films', $filmDb);
 
     }
 
@@ -183,11 +205,6 @@ class Scraper {
 
     }
 
-    private function _scrapeSingle($id) {
-
-
-
-    }
 
     /** FILM LIST **/
     public function scrapeFilmList() {

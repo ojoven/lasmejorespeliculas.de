@@ -40,4 +40,34 @@ class Functions {
 
     }
 
+    /** DB **/
+    public static function insertDB($db, $tableName, $data) {
+
+        $dataParsed = self::implodeindexesvalues($data);
+        $query = "INSERT INTO " . $tableName . " (" . $dataParsed['indexes'] . ") VALUES (" . $dataParsed['values'] . ")";
+        $db->query($query);
+
+    }
+
+
+    public static function implodeindexesvalues($data) {
+        $indexes = "";
+        $values = "";
+        foreach ($data as $index=>$value) {
+            $indexes .= $index . ",";
+            if (is_string($value)) {
+                $value = self::escapeSingleQuotes($value);
+            }
+            $values .= "'". $value . "',";
+        }
+        $dataParsed['indexes'] = rtrim($indexes, ',');
+        $dataParsed['values'] = rtrim($values, ',');
+        return $dataParsed;
+
+    }
+
+    public static function escapeSingleQuotes($string) {
+        return str_replace("'","\'",str_replace("\'","'",$string));
+    }
+
 }

@@ -92,6 +92,7 @@ CREATE TABLE `films` (
   `id` int(11) NOT NULL,
   `name` varchar(512) COLLATE utf8_bin NOT NULL,
   `original_name` varchar(512) COLLATE utf8_bin DEFAULT NULL,
+  `image` varchar(256) COLLATE utf8_bin NOT NULL,
   `duration` int(3) NOT NULL,
   `year` int(4) NOT NULL,
   `country` varchar(128) COLLATE utf8_bin NOT NULL,
@@ -172,4 +173,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2015-10-30 18:25:41
+-- Dump completed on 2015-10-30 18:56:07
