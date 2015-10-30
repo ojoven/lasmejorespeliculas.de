@@ -14,6 +14,8 @@ At this moment we're scraping Filmaffinity to retrieve all the films and to extr
 * Actors / Actresses
 * Etc.
 
+All the films HTMLs from Filmaffinity are in scraper/htmls/films.tar.gz
+
 Following steps
 * To create the DB for all the data extracted
 * To create the pages: home, search results, result page (director/actor), film page
