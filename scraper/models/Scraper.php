@@ -92,10 +92,11 @@ class Scraper {
                         break;
 
                     case 'Reparto':
-                        $film['actors'] = array();
+                        $film['cast'] = array();
                         foreach ($dt->next_sibling()->children() as $actor) {
-                            array_push($film['actors'], trim($actor->plaintext));
+                            array_push($film['cast'], trim($actor->plaintext));
                         }
+                        $film['cast_string'] = implode(", ", $film['cast']);
                         break;
 
                     case 'Productora':
