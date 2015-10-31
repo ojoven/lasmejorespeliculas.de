@@ -19,13 +19,15 @@ class Scraper {
 
             foreach ($films as $film) {
 
-                Functions::log("Retrieving HTML for film " . $film['id']);
-                Functions::log($film['name'] . PHP_EOL);
+                Functions::log($film['name']);
 
                 $filmHtml = $this->_retrieveFilmSingleHtml($film['id']);
                 $this->_storeHtmlFilmSingleHtml($filmHtml, $film['id']);
-                $filmObject = $this->parseFilmSingle($filmHtml, $film['id']);
-                $this->_saveFilmDB($filmObject);
+                $filmObject = $this->parseFilmSingle($filmHtml, $film['id'], $film['position']);
+
+                // Let's store in the DB
+                $db = new Database(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
+                $this->_saveFilmDB($db, $filmObject);
 
             }
 
@@ -33,14 +35,16 @@ class Scraper {
 
     }
 
-    public function parseFilmSingle($filmHtml, $id) {
+    public function parseFilmSingle($filmHtml, $id, $position) {
 
         $html = str_get_html($filmHtml);
 
-        //$film['position'] = $filmHtml->find('.position', 0)->plaintext;
         $film['id'] = $id;
         $film['image'] = $html->find('#movie-main-image-container', 0)->find('img', 0)->getAttribute('src');
         $film['name'] = trim($html->find('#main-title', 0)->find('span', 0)->plaintext);
+        $film['rating'] = floatval(str_replace(",", ".", trim($html->find('#movie-rat-avg', 0)->plaintext)));
+        $film['num_votes'] = str_replace(".", "", trim($html->find('#movie-count-rat', 0)->find('span',0)->plaintext));
+        $film['position'] = $position;
 
         $movieInfos = $html->find('.movie-info');
 
@@ -110,6 +114,7 @@ class Scraper {
                         foreach ($dt->next_sibling()->find('a') as $genre) {
                             array_push($film['genres'], trim($genre->plaintext));
                         }
+                        $film['genres_string'] = implode(", ", $film['genres']);
                         break;
 
                     case 'Sinopsis':
@@ -129,7 +134,10 @@ class Scraper {
                         $film['reviews']['pro'] = array();
                         foreach ($dt->next_sibling()->find('li') as $review) {
                             if (!$review->first_child()->find('div', 0)) break;
+
+                            // Review
                             $reviewFilm['review'] = trim(str_replace("&nbsp;", "", $review->first_child()->find('div', 0)->plaintext));
+
                             // Author and media
                             $author = trim($review->find('.pro-crit-med', 0)->plaintext);
                             $author = explode(":", $author);
@@ -154,15 +162,13 @@ class Scraper {
 
         }
 
-        Functions::log(print_r($film['reviews']['pro']));
-
         return $film;
 
     }
 
-    private function _saveFilmDB($film) {
+    private function _saveFilmDB($db, $film) {
 
-        $db = new Database(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
+        $db->connect();
 
         // Films table
         $filmDb = $film;
@@ -170,8 +176,108 @@ class Scraper {
         foreach ($relations as $relation) {
             unset($filmDb[$relation]);
         }
-
         Functions::insertDB($db, 'films', $filmDb);
+
+        // AKAs
+        if (isset($film['akas'])) {
+
+            foreach ($film['akas'] as $aka) {
+                $akaDb = array(
+                    'id' => $film['id'],
+                    'aka' => $aka
+                );
+                Functions::insertDB($db, 'akas', $akaDb);
+            }
+
+        }
+
+        // Genres
+        if (isset($film['genres'])) {
+
+            $genresData = array();
+            $indexes = array('id', 'genre');
+
+            foreach ($film['genres'] as $genre) {
+                $genreDb = array(
+                    'id' => $film['id'],
+                    'genre' => $genre
+                );
+                array_push($genresData, $genreDb);
+            }
+
+            Functions::insertMultipleDB($db, 'genres', $indexes, $genresData);
+
+        }
+
+        // Cast
+        if (isset($film['cast'])) {
+
+            $castData = array();
+            $indexes = array('id', 'name');
+
+            foreach ($film['cast'] as $actor) {
+                $actorDb = array(
+                    'id' => $film['id'],
+                    'name' => $actor
+                );
+                array_push($castData, $actorDb);
+            }
+
+            Functions::insertMultipleDB($db, 'cast', $indexes, $castData);
+
+        }
+
+        // Directors
+        if (isset($film['directors'])) {
+
+            foreach ($film['directors'] as $director) {
+                $directorDb = array(
+                    'id' => $film['id'],
+                    'name' => $director
+                );
+                Functions::insertDB($db, 'directors', $directorDb);
+            }
+
+        }
+
+        // Prizes
+        if (isset($film['prizes'])) {
+
+            $prizesData = array();
+            $indexes = array('id', 'prize');
+
+            foreach ($film['prizes'] as $prize) {
+                $prizeDb = array(
+                    'id' => $film['id'],
+                    'prize' => $prize
+                );
+                array_push($prizesData, $prizeDb);
+            }
+
+            Functions::insertMultipleDB($db, 'prizes', $indexes, $prizesData);
+
+        }
+
+        // Pro Reviews
+        if (isset($film['reviews']['pro'])) {
+
+            $reviewsData = array();
+            $indexes = array('id', 'review', 'rating', 'author', 'media');
+
+            foreach ($film['reviews']['pro'] as $review) {
+                $reviewDb = array(
+                    'id' => $film['id'],
+                    'review' => $review['review'],
+                    'rating' => $review['rating'],
+                    'author' => (isset($review['author'])) ?$review['author'] : null,
+                    'media' => (isset($review['media'])) ? $review['media'] : null
+                );
+                array_push($reviewsData, $reviewDb);
+            }
+
+            Functions::insertMultipleDB($db, 'proreviews', $indexes, $reviewsData);
+
+        }
 
     }
 
@@ -213,7 +319,6 @@ class Scraper {
 
         while (true) {
 
-            Functions::log("Retrieving films for page " . $page);
             $pageFilms = $this->_retrieveFilmListPage($page);
 
             // Exit the loop when there's empty return
@@ -221,8 +326,6 @@ class Scraper {
 
             $this->_storeHtmlFilmListPage($pageFilms, $page);
             $this->_parseFilmListPage($pageFilms, $page);
-
-            //if ($page>=12) break; // Limit for initial testing
 
             $page++;
 

@@ -49,6 +49,27 @@ class Functions {
 
     }
 
+    public static function insertMultipleDB($db, $tableName, $indexes, $data) {
+
+        $query = "INSERT INTO " . $tableName . " (" . implode(",", $indexes) . ") VALUES ";
+        foreach ($data as $value) {
+            $query .= "(" . self::addQuotesAndImplode($value) . "),";
+        }
+        $query = rtrim($query, ",");
+        $db->query($query);
+
+    }
+
+    public static function addQuotesAndImplode($array) {
+
+        foreach ($array as &$element) {
+            $element = "'" . iconv("UTF-8", "CP1252", self::escapeSingleQuotes($element)) . "'";
+        }
+
+        return implode(",", $array);
+
+    }
+
 
     public static function implodeindexesvalues($data) {
         $indexes = "";
@@ -58,7 +79,7 @@ class Functions {
             if (is_string($value)) {
                 $value = self::escapeSingleQuotes($value);
             }
-            $values .= "'". $value . "',";
+            $values .= "'". iconv("UTF-8", "CP1252", $value) . "',";
         }
         $dataParsed['indexes'] = rtrim($indexes, ',');
         $dataParsed['values'] = rtrim($values, ',');
