@@ -1,4 +1,7 @@
+# IDE
 .idea
+
+# Scraper
 scraper/config.php
 scraper/htmls/db.tar.gz
 scraper/htmls/pages.tar.gz
@@ -6,3 +9,10 @@ scraper/htmls/reviews.tar.gz
 scraper/htmls/filmaffinity.sql
 scraper/htmls/films
 scraper/htmls/reviews
+
+# Laravel
+/vendor
+/node_modules
+Homestead.yaml
+Homestead.json
+.env
