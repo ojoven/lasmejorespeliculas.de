@@ -34,6 +34,28 @@ class Functions {
 
     }
 
+    public static function getURLBodyAndHeaders($url, $params) {
+
+        $url .= '?' . http_build_query($params);
+
+        $ch = curl_init();
+
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($params));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HEADER, true);
+
+        $output = curl_exec($ch);
+
+        $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+        $response['headers'] = substr($output, 0, $header_size);
+        $response['body'] = substr($output, $header_size);
+
+        curl_close ($ch);
+
+        return $response;
+    }
+
     public static function log($message) {
 
         echo $message . PHP_EOL;
@@ -56,6 +78,7 @@ class Functions {
             $query .= "(" . self::addQuotesAndImplode($value) . "),";
         }
         $query = rtrim($query, ",");
+
         $db->query($query);
 
     }

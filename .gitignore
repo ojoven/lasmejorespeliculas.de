@@ -1,3 +1,4 @@
 .idea
 scraper/config.php
 scraper/htmls/films
+scraper/htmls/reviews

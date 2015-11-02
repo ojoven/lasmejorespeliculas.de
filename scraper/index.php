@@ -6,4 +6,5 @@ require_once 'models/Scraper.php';
 // Taken from Filmaffinity TOP FA
 $scraper = new Scraper();
 //$scraper->scrapeFilmList();
-$scraper->scrapeFilmSingle();
+//$scraper->scrapeFilmSingle();
+$scraper->scrapeFilmUserReviews();

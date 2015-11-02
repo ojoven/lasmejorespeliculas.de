@@ -22,7 +22,7 @@ class Scraper {
                 Functions::log($film['name']);
 
                 $filmHtml = $this->_retrieveFilmSingleHtml($film['id']);
-                $this->_storeHtmlFilmSingleHtml($filmHtml, $film['id']);
+                $this->_storeFilmSingleHtml($filmHtml, $film['id']);
                 $filmObject = $this->parseFilmSingle($filmHtml, $film['id'], $film['position']);
 
                 // Let's store in the DB
@@ -281,7 +281,7 @@ class Scraper {
 
     }
 
-    private function _storeHtmlFilmSingleHtml($filmHtml, $id) {
+    private function _storeFilmSingleHtml($filmHtml, $id) {
 
         // We'll save the HTMLs for if future additional parsing is needed
         $firstChar = $id[0];
@@ -297,7 +297,6 @@ class Scraper {
         // First char (to avoid having all films stored in the same folder)
         $firstChar = $id[0];
 
-        // No documentaries nor TV series
         $url = "http://www.filmaffinity.com/es/film" . $id . ".html";
 
         $pageSingleFilmPath = SCRAPER_ROOT_PATH . "/htmls/films/" . $firstChar . "/" . $id . ".html";
@@ -308,6 +307,111 @@ class Scraper {
         }
 
         return $filmHtml;
+
+    }
+
+    /** FILM REVIEWS **/
+    public function scrapeFilmUserReviews() {
+
+        $numPages = 1090; // This number we've got after having run scrapeFilmList()
+        for ($page = 1; $page <= $numPages; $page++) {
+
+            Functions::log(PHP_EOL . "Page " . $page);
+            Functions::log("========================");
+            $pageFilms = $this->_retrieveFilmListPage($page);
+            $films = $this->_parseFilmListPage($pageFilms);
+
+            foreach ($films as $film) {
+
+                Functions::log($film['name']);
+
+                $filmHtml = $this->_retrieveFilmReviewsHtml($film['id']);
+                $filmReviews = $this->parseFilmReviews($filmHtml, $film['id']);
+
+                // Let's store in the DB
+                $db = new Database(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
+                $this->_saveFilmReviewsDB($db, $filmReviews);
+
+            }
+
+        }
+
+    }
+
+    private function _retrieveFilmReviewsHtml($id) {
+
+        // First char (to avoid having all films stored in the same folder)
+        $firstChar = $id[0];
+        $page = 1;
+        $filmReviews = array();
+
+        while(true) {
+
+            //Functions::log("Reviews page: " . $page);
+            $url = "http://www.filmaffinity.com/es/reviews/" . $page . "/" . $id . ".html";
+
+            $pageFilmReviewsPath = SCRAPER_ROOT_PATH . "/htmls/reviews/" . $firstChar . "/" . $id . "_" . $page . ".html";
+            if (file_exists($pageFilmReviewsPath)) {
+                $filmReviews[$page] = file_get_contents($pageFilmReviewsPath);
+            } else {
+                $response = Functions::getURLBodyAndHeaders($url, array());
+                if (strpos($response['headers'], 'Status: 404 Not Found')!==FALSE) break;
+                $filmReviews[$page] = $response['body'];
+
+                $pageFilmReviewsPath = SCRAPER_ROOT_PATH . "/htmls/reviews/" . $firstChar . "/" . $id . "_" . $page . ".html";
+                file_put_contents($pageFilmReviewsPath, $filmReviews[$page]);
+            }
+
+            $page++;
+
+        }
+
+        return $filmReviews;
+
+    }
+
+    public function parseFilmReviews($filmReviews, $filmId) {
+
+        $parsedFilmReviews = array();
+
+        foreach ($filmReviews as $filmReviewPage) {
+
+            $html = str_get_html($filmReviewPage);
+
+            foreach($html->find('.movie-review-wrapper') as $reviewHtml) {
+
+                $review['id'] = $filmId;
+                $review['author'] = trim($reviewHtml->find('.mr-user-nick', 0)->plaintext);
+                $review['rating'] = trim($reviewHtml->find('.user-reviews-movie-rating', 0)->plaintext);
+                $review['title'] = trim($reviewHtml->find('.review-title', 0)->plaintext);
+                $review['review'] = trim($reviewHtml->find('.review-text1', 0)->plaintext);
+
+                $review['spoiler'] = '';
+                if ($reviewHtml->find('.review-text2', 0)) {
+                    $review['spoiler'] = trim($reviewHtml->find('.review-text2', 0)->plaintext);
+                }
+
+                $review['date_review'] = trim($reviewHtml->find('.review-date', 0)->plaintext);
+                if ($reviewHtml->find('.review-useful', 0)->find('b', 0)) {
+                    $review['num_positive'] = trim($reviewHtml->find('.review-useful', 0)->find('b', 0)->plaintext);
+                    $review['num_votes'] = trim($reviewHtml->find('.review-useful', 0)->find('b', 1)->plaintext);
+                }
+
+                array_push($parsedFilmReviews, $review);
+            }
+
+        }
+
+        return $parsedFilmReviews;
+
+    }
+
+    private function _saveFilmReviewsDB($db, $reviews) {
+
+        $db->connect();
+
+        $indexes = array('id', 'author', 'rating', 'title', 'review', 'spoiler', 'date_review', 'num_positive', 'num_votes');
+        Functions::insertMultipleDB($db, 'reviews', $indexes, $reviews);
 
     }
 
