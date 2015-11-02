@@ -1,0 +1,6 @@
+@import 'partials/reset';
+@import 'partials/mixins';
+
+body {
+  @extend .main-font;
+}
