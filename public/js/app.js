@@ -20,6 +20,9 @@ $(document).ready(function() {
 /** INITIAL **/
 function loadInitialResult() {
 
+    console.log(window.location.pathname);
+    if (window.location.pathname) return;
+
     var hash = window.location.hash;
     if (hash) {
         hash = hash.split("#!/")[1];
@@ -35,7 +38,7 @@ function loadInitialResult() {
                 hash = hash.replace(/_/g, ' ');
                 loadSingleResult('director', hash);
             } else if (hash.indexOf('a/')!==-1) { // actor
-                hash = hash.split("s/")[1];
+                hash = hash.split("a/")[1];
                 hash = hash.replace(/_/g, ' ');
                 loadSingleResult('actor', hash);
             }
@@ -196,7 +199,9 @@ function setHashtagURL(type, name) {
 /** META **/
 function updateMeta(type, name) {
 
-    document.title = "Las mejores películas de " + name + " | Powered by Filmaffinity";
+    var title = "Las mejores películas de " + name;
+    document.title = title + " | Powered by Filmaffinity";
+    $("#title").html(title);
 
 }
 

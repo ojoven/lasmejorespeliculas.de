@@ -1,12 +1,17 @@
+<?php
+\App\Lib\Functions::redirectIfFacebook();
+$title = (isset($result)) ? "Las mejores películas de " . $result['name'] : "Las mejores películas de...";
+?>
+
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Las mejores películas de... | Powered by Filmaffinity</title>
+        <title><?php echo $title; ?> | Powered by Filmaffinity</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
         <link href='http://fonts.googleapis.com/css?family=Raleway:400,700,100' rel='stylesheet' type='text/css'>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
-        <link href="css/style.css" rel="stylesheet">
+        <link href="/css/style.css" rel="stylesheet">
 
         <link rel="apple-touch-icon" sizes="57x57" href="/apple-icon-57x57.png">
         <link rel="apple-touch-icon" sizes="60x60" href="/apple-icon-60x60.png">
@@ -30,7 +35,7 @@
     <body>
         <div class="container">
             <div class="content">
-                <div id="title">Las mejores películas de...</div>
+                <div id="title"><?php echo $title; ?></div>
                 <span id="subtitle">
                     Toy project by <a href="http://twitter.com/ojoven" target="_blank">@ojoven</a>, powered by Filmaffinity
                 </span>
@@ -42,16 +47,20 @@
                     </a>
                 </span>
                 <div id="results">
-
+                    <?php if (isset($result)) { ?>
+                        @include('single')
+                    <?php } elseif(isset($results)) { ?>
+                        @include('results')
+                    <?php } ?>
                 </div>
                 <div id="loader"></div>
             </div>
         </div>
 
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-        <script type='application/javascript' src='js/vendor/fastclick.js'></script>
-        <script type='application/javascript' src='js/vendor/addclear.min.js'></script>
-        <script type="text/javascript" src="js/app.js"></script>
+        <script type='application/javascript' src='/js/vendor/fastclick.js'></script>
+        <script type='application/javascript' src='/js/vendor/addclear.min.js'></script>
+        <script type="text/javascript" src="/js/app.js"></script>
 
         <script>
 

@@ -19,3 +19,8 @@ Route::controller('api', 'ApiController');
 
 // HTML renders
 Route::controller('html', 'HtmlController');
+
+// We need this for external linking
+Route::get('a/{name}', 'IndexController@actor');
+Route::get('d/{name}', 'IndexController@director');
+Route::get('s/{query}', 'IndexController@search');

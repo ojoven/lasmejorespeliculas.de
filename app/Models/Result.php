@@ -118,6 +118,7 @@ class Result extends Model {
         $result['type'] = $type;
         $result['type_string'] = $this->_getStringFromType($type);
         $result['name'] = $name;
+        $result['films'] = array();
 
         if (isset($filmIds) && $filmIds) {
             $result['films'] = Film::orderBy('rating', 'desc')->find($filmIds)->toArray();
