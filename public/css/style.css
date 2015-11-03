@@ -33,7 +33,7 @@ a { color: #444; text-decoration: none; }
 #subtitle a { text-decoration: underline; color: #999; }
 #subtitle a:hover, #subtitle a:focus { color: #444; }
 
-#search { border: 1px solid #ccc; border-radius: 0; box-sizing: border-box; font-size: 20px; padding: 10px 14px; width: 400px; }
+#search { border: 1px solid #ccc; border-radius: 0; box-sizing: border-box; font-size: 20px; padding: 10px 14px; width: 400px; -webkit-appearance: none; }
 
 #to-random-container { width: 400px; display: block; text-align: right; margin: 5px auto; }
 
@@ -67,7 +67,7 @@ a { color: #444; text-decoration: none; }
 
 @media all and (max-width: 640px) { #subtitle { font-size: 11px; }
   #search, #to-random-container, #results .single-header, #results .result a { width: 100%; }
-  #results .film { width: 100%; box-sizing: border-box; }
-  #results .film .left { width: 70px; }
-  #results .film .right { width: calc(95% - 70px); }
+  #results .film { width: 100%; box-sizing: border-box; padding: 10px 0; }
+  #results .film .left { width: 23%; }
+  #results .film .right { width: 70%; }
   #results .film .right .cast, #results .film .right .title, #results .film .right .director { max-width: 100%; } }

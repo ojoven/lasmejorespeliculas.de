@@ -10,13 +10,11 @@
 
     width: 100%;
     box-sizing: border-box;
+    padding: 10px 0;
 
-    .left {
-      width: 70px;
-    }
-
+    .left { width: 23%; }
     .right {
-      width: calc(95% - 70px);
+      width: 70%;
       .cast, .title, .director {
         max-width: 100%;
       }

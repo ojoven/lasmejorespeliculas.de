@@ -76,6 +76,8 @@ function activateLinkResults() {
 
         });
 
+        return false;
+
     });
 
 }
@@ -98,6 +100,8 @@ function activateLoadRandomResult() {
             activateLinkResults();
 
         });
+
+        return false;
 
     });
 
