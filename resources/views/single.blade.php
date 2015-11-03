@@ -7,6 +7,8 @@
 
     <div class="social-header">
 
+        <div class="fb-like" data-href="<?php echo $result['url']; ?>" data-layout="button_count" data-action="like" data-show-faces="false" data-share="false"></div>
+
         <a href="https://twitter.com/share" class="twitter-share-button" data-url="<?php echo $result['url']; ?>" data-text="<?php echo $result['text_twitter']; ?>" data-related="ojoven" data-lang="es">Twittear</a>
         <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
 

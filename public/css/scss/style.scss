@@ -105,6 +105,10 @@ a {
     width: 400px;
     margin: 10px auto;
     text-align: right;
+    .fb-like {
+      position:relative;
+      top:-2px;
+    }
   }
 
   .film {

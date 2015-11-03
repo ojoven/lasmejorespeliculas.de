@@ -50,6 +50,7 @@ a { color: #444; text-decoration: none; }
 #results .single-header .type { color: #999; font-size: 16px; }
 #results .single-header .title { display: block; font-size: 22px; }
 #results .social-header { width: 400px; margin: 10px auto; text-align: right; }
+#results .social-header .fb-like { position: relative; top: -2px; }
 #results .film { width: 400px; margin: 5px auto; padding: 10px; border-bottom: 1px solid #ccc; }
 #results .film .left { float: left; width: 90px; }
 #results .film .left img { width: 100%; }
