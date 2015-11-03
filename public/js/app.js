@@ -4,6 +4,8 @@ $(document).ready(function() {
 
     $("#search").on('keyup', function(e) {
 
+        $("#loader").show();
+
         var avoidChars = [16, 37, 38, 39, 40, 27];
 
         if (avoidChars.indexOf(e.which)==-1) {
@@ -29,14 +31,42 @@ var delay = (function(){
 
 function search($query) {
 
+    $("#results").html('');
+
     var url = urlBase + "html/search";
     var data = {};
     data.query = $query;
 
     $.get(url, data, function(response) {
 
+        $("#loader").hide();
         $("#results").html(response);
+        activateLinkResults();
 
     });
+
+}
+
+function activateLinkResults() {
+
+    $(".result a").off().on('click', function() {
+
+        $("#loader").show();
+        $("#results").html('');
+
+        var url = urlBase + "html/single";
+        var data = {};
+        data.type = $(this).data('type');
+        data.name = $(this).data('name');
+
+        $.get(url, data, function(response) {
+
+            $("#loader").hide();
+            $("#results").html(response);
+
+        });
+
+    });
+
 
 }

@@ -23,4 +23,17 @@ class HtmlController extends Controller {
         return view('results', $data);
     }
 
+    public function getSingle() {
+
+        $type = $_GET['type'];
+        $name = $_GET['name'];
+
+        $resultModel = new Result();
+        $result = $resultModel->getSingleResult($type, $name);
+
+        $data['result'] = $result;
+        return view('single', $data);
+    }
+
+
 }

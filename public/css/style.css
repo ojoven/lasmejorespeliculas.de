@@ -20,3 +20,47 @@ q:before, q:after { content: ''; content: none; }
 table { border-collapse: collapse; border-spacing: 0; }
 
 .main-font, body { font-family: 'Raleway', sans-serif; }
+
+body { padding: 20px; text-align: center; box-sizing: border-box; }
+
+a { color: #444; text-decoration: none; }
+
+.clear { clear: both; }
+
+#title { font-size: 22px; margin: 5px; }
+
+#subtitle { font-size: 16px; color: #999; display: block; margin: 10px; }
+#subtitle a { text-decoration: underline; color: #999; }
+#subtitle a:hover, #subtitle a:focus { color: #444; }
+
+#search { border: 1px solid #ccc; border-radius: 0; box-sizing: border-box; font-size: 20px; padding: 10px 14px; width: 360px; }
+
+#results { margin-top: 20px; }
+#results .result:nth-child(even) a { background: #fdfdfd; }
+#results .result a { padding: 10px; border-bottom: 1px solid #ccc; display: block; }
+#results .result a:hover, #results .result a:focus { background: #f0f0f0; }
+#results .result a .type { display: block; color: #999; }
+#results .result a .title { display: block; }
+#results .result a .total { display: block; }
+#results .single-header { margin: 15px; }
+#results .single-header .type { color: #999; font-size: 16px; }
+#results .single-header .title { display: block; font-size: 22px; }
+#results .film { width: 400px; margin: 5px auto; padding: 10px; border-bottom: 1px solid #ccc; }
+#results .film .left { float: left; width: 90px; }
+#results .film .left img { width: 100%; }
+#results .film .right { float: left; margin-left: 10px; text-align: left; }
+#results .film .right > * { display: block; }
+#results .film .right .title { font-size: 18px; max-width: 300px; }
+#results .film .right .rating { margin: 10px; font-weight: bold; font-size: 35px; }
+#results .film .right .cast { max-width: 300px; }
+#results .film .to-filmaffinity { display: block; margin: 10px 0; }
+#results .film .to-filmaffinity:hover, #results .film .to-filmaffinity:focus { text-decoration: underline; }
+#results .film .to-filmaffinity i { left: 5px; position: relative; top: 1px; }
+
+#loader { background: url(../img/loader.gif) no-repeat 0 0; width: 48px; height: 48px; display: none; margin: 30px auto; }
+
+@media all and (max-width: 640px) { #search { width: 100%; }
+  #results .film { width: 100%; box-sizing: border-box; }
+  #results .film .left { width: 70px; }
+  #results .film .right { width: calc(95% - 70px); }
+  #results .film .right .cast, #results .film .right .title { max-width: 100%; } }

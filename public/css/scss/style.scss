@@ -3,4 +3,144 @@
 
 body {
   @extend .main-font;
+  padding: 20px;
+  text-align: center;
+  box-sizing: border-box;
 }
+
+a {
+  color: #444;
+  text-decoration: none;
+}
+
+.clear {
+  clear:both;
+}
+
+#title {
+  font-size: 22px;
+  margin: 5px;
+}
+
+#subtitle {
+  font-size: 16px;
+  color: #999;
+  display: block;
+  margin: 10px;
+  a {
+    text-decoration: underline; color: #999;
+    &:hover, &:focus {
+      color: #444;
+    }
+  }
+}
+
+#search {
+  border: 1px solid #ccc;
+  border-radius: 0;
+  box-sizing: border-box;
+  font-size: 20px;
+  padding: 10px 14px;
+  width: 360px;
+}
+
+#results {
+
+  margin-top: 20px;
+
+  .result {
+    &:nth-child(even) {
+      a { background: #fdfdfd; }
+    }
+  }
+
+  .result a {
+
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+    display: block;
+
+    &:hover, &:focus {
+      background: #f0f0f0;
+    }
+
+    .type { display: block; color: #999; }
+    .title { display: block; }
+    .total { display: block; }
+  }
+
+  .single-header {
+    margin: 15px;
+    .type {
+      color: #999;
+      font-size: 16px;
+    }
+    .title {
+      display: block;
+      font-size: 22px;
+    }
+  }
+
+  .film {
+
+    width: 400px;
+    margin: 5px auto;
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+
+    .left {
+      float: left;
+      width: 90px;
+      img {
+        width: 100%;
+      }
+    }
+
+    .right {
+      float: left;
+      margin-left: 10px;
+      text-align: left;
+      > * {
+        display: block;
+      }
+      .title {
+        font-size: 18px;
+        max-width: 300px;
+      }
+      .rating {
+        margin: 10px;
+        font-weight: bold;
+        font-size: 35px;
+      }
+      .cast {
+        max-width: 300px;
+      }
+    }
+
+    .to-filmaffinity {
+      display: block;
+      margin: 10px 0;
+      &:hover, &:focus {
+        text-decoration: underline;
+      }
+      i {
+        left: 5px;
+        position: relative;
+        top: 1px;
+      }
+    }
+
+  }
+
+}
+
+
+#loader {
+  background: url(../img/loader.gif) no-repeat 0 0;
+  width: 48px;
+  height: 48px;
+  display: none;
+  margin: 30px auto;
+}
+
+@import 'queries/mobile';

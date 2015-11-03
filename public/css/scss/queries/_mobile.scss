@@ -1,0 +1,24 @@
+@media all and (max-width: 640px) {
+
+  #search {
+    width: 100%;
+  }
+
+  #results .film {
+
+    width: 100%;
+    box-sizing: border-box;
+
+    .left {
+      width: 70px;
+    }
+
+    .right {
+      width: calc(95% - 70px);
+      .cast, .title {
+        max-width: 100%;
+      }
+    }
+  }
+
+}
