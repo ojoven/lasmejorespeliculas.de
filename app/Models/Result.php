@@ -26,15 +26,7 @@ class Result extends Model {
 
         }
 
-        $result['type'] = $type;
-        $result['type_string'] = $this->_getStringFromType($type);
-        $result['name'] = $name;
-
-        if (isset($filmIds) && $filmIds) {
-
-            $result['films'] = Film::orderBy('rating', 'desc')->find($filmIds)->toArray();
-
-        }
+        $result = $this->_buildResultSingle($type, $name, $filmIds);
 
         return $result;
 
@@ -81,12 +73,58 @@ class Result extends Model {
 
     }
 
+    /** GET RANDOM RESULTS **/
+    public function getRandomResultHome() {
+
+        $numTotalFilms = 1000;
+
+        // Get the first 1000 films
+        $filmIds = Film::orderBy('rating', 'desc')->limit($numTotalFilms)->select('id')->lists('id')->toArray();
+
+        // Random retrieve 1 of them
+        $offset = rand(0, $numTotalFilms - 1);
+        $filmId = array_slice($filmIds, $offset, 1);
+
+        // 5 of 6 times, we'll show director, instead of actor
+        $value = rand(1,6);
+        if ($value==1) { // 1 of 4 possibilities: actor/actress
+            $name = Cast::where('id', '=', $filmId)->select('name')->lists('name')->first();
+            $filmIds = Cast::where('name', '=', $name)->select('id')->lists('id')->toArray();
+            $type = 'actor';
+        } else {
+            $name = Director::where('id', '=', $filmId)->select('name')->lists('name')->first();
+            $filmIds = Director::where('name', '=', $name)->select('id')->lists('id')->toArray();
+            $type = 'director';
+        }
+
+        $result = $this->_buildResultSingle($type, $name, $filmIds);
+
+        return $result;
+
+    }
+
+
     private function _getStringFromType($type) {
+
         switch ($type) {
             case 'director': $typeString = "Director"; break;
             case 'actor': $typeString = "Actor / Actress"; break;
         }
         return $typeString;
+    }
+
+    private function _buildResultSingle($type, $name, $filmIds) {
+
+        $result['type'] = $type;
+        $result['type_string'] = $this->_getStringFromType($type);
+        $result['name'] = $name;
+
+        if (isset($filmIds) && $filmIds) {
+            $result['films'] = Film::orderBy('rating', 'desc')->find($filmIds)->toArray();
+        }
+
+        return $result;
+
     }
 
 

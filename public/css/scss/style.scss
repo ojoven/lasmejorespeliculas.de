@@ -112,7 +112,7 @@ a {
         font-weight: bold;
         font-size: 35px;
       }
-      .cast {
+      .cast, .director {
         max-width: 300px;
       }
     }
@@ -130,6 +130,13 @@ a {
       }
     }
 
+  }
+
+  .sub-result {
+    margin-right: 3px;
+    &:hover, &:focus {
+      text-decoration: underline;
+    }
   }
 
 }

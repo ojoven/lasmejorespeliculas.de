@@ -19,15 +19,37 @@
                     </span>
                     <span class="rating"><?php echo $film['rating'] ?></span>
                     <?php if ($result['type']=="director") { ?>
-                        <span class="cast"><?php echo $film['cast_string']; ?></span>
-                    <?php } else { // Actors ?>
-                        <span class="director"><?php echo $film['director_string']; ?></span>
+
+                        <span class="cast">
+                            <?php
+                            $cast = explode(", ", $film['cast_string']);
+                            foreach ($cast as $index=>$actor) { ?>
+                            <a class="sub-result to-single" href="#" data-type="actor" data-name="<?php echo $actor; ?>">
+                                <?php echo $actor; ?>
+                            </a>
+                            <?php } ?>
+                        </span>
+
+                    <?php } else { // We show director ?>
+
+                        <span class="director">
+                            <?php
+                            $directors = explode(", ", $film['director_string']);
+                            foreach ($directors as $index=>$director) { ?>
+                                <a class="sub-result to-single" href="#" data-type="director" data-name="<?php echo $director; ?>">
+                                    <?php echo $director; ?>
+                                </a>
+                            <?php } ?>
+                        </span>
+
                     <?php } ?>
+
+                    <a class="to-filmaffinity" href="http://www.filmaffinity.com/es/film<?php echo $film['id'];?>.html" target="_blank">
+                        Ver película en Filmaffinity<i class="fa fa-external-link"></i>
+                    </a>
+
                 </div>
                 <div class="clear"></div>
-                <a class="to-filmaffinity" href="http://www.filmaffinity.com/es/film<?php echo $film['id'];?>.html" target="_blank">
-                    Ver película en Filmaffinity<i class="fa fa-external-link"></i>
-                </a>
             </li>
 
         <?php } ?>

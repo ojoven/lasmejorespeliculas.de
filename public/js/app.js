@@ -1,5 +1,6 @@
 $(document).ready(function() {
 
+    activateLinkResults();
     var waiting = 300;
 
     $("#search").on('keyup', function(e) {
@@ -49,7 +50,10 @@ function search($query) {
 
 function activateLinkResults() {
 
-    $(".result a").off().on('click', function() {
+    console.log('activate pre');
+    $(".to-single").off().on('click', function() {
+
+        console.log('activate post');
 
         $("#loader").show();
         $("#results").html('');
@@ -63,6 +67,8 @@ function activateLinkResults() {
 
             $("#loader").hide();
             $("#results").html(response);
+
+            activateLinkResults();
 
         });
 

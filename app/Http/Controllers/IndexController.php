@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Result;
 use Illuminate\Http\Request;
 use App\Http\Requests;
 
@@ -11,7 +12,11 @@ class IndexController extends Controller {
 
     public function index() {
 
-        return view('index');
+        $resultModel = new Result();
+        $result = $resultModel->getRandomResultHome();
+
+        $data['result'] = $result;
+        return view('index', $data);
 
     }
 

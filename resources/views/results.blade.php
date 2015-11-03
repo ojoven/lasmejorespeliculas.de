@@ -5,7 +5,7 @@
         <?php foreach ($results as $index=>$result) { ?>
 
             <li class="result">
-                <a href="#" data-type="<?php echo $result['type']; ?>" data-name="<?php echo $result['name']; ?>">
+                <a class="to-single" href="#" data-type="<?php echo $result['type']; ?>" data-name="<?php echo $result['name']; ?>">
                     <?php if (isset($result['image'])) { ?>
                         <img src="<?php echo $result['image']; ?>">
                     <?php } ?>
