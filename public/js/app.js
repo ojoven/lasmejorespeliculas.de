@@ -20,8 +20,7 @@ $(document).ready(function() {
 /** INITIAL **/
 function loadInitialResult() {
 
-    console.log(window.location.pathname);
-    if (window.location.pathname) return;
+    if (window.location.pathname && window.location.pathname!="/") return;
 
     var hash = window.location.hash;
     if (hash) {

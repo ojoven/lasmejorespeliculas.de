@@ -49,6 +49,7 @@ a { color: #444; text-decoration: none; }
 #results .single-header { background: #f6f6f6; box-sizing: border-box; margin: 15px auto; padding: 10px; width: 400px; }
 #results .single-header .type { color: #999; font-size: 16px; }
 #results .single-header .title { display: block; font-size: 22px; }
+#results .social-header { width: 400px; margin: 10px auto; text-align: right; }
 #results .film { width: 400px; margin: 5px auto; padding: 10px; border-bottom: 1px solid #ccc; }
 #results .film .left { float: left; width: 90px; }
 #results .film .left img { width: 100%; }
@@ -66,7 +67,7 @@ a { color: #444; text-decoration: none; }
 #loader { background: url(../img/loader.gif) no-repeat 0 0; width: 48px; height: 48px; display: none; margin: 30px auto; }
 
 @media all and (max-width: 640px) { #subtitle { font-size: 11px; }
-  #search, #to-random-container, #results .single-header, #results .result a { width: 100%; }
+  #search, #to-random-container, #results .single-header, #results .social-header #results .result a { width: 100%; }
   #results .film { width: 100%; box-sizing: border-box; padding: 10px 0; }
   #results .film .left { width: 23%; }
   #results .film .right { width: 70%; }

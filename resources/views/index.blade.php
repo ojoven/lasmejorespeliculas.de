@@ -7,6 +7,29 @@ $title = (isset($result)) ? "Las mejores películas de " . $result['name'] : "La
 <html>
     <head>
         <title><?php echo $title; ?> | Powered by Filmaffinity</title>
+        <?php if (isset($result)) {
+            $description = \App\Lib\Functions::createDescriptionForResult($result);
+        ?>
+
+            <meta name="twitter:card" content="summary" />
+            <meta name="twitter:site" content="@ojoven" />
+            <meta name="twitter:title" content="<?php echo $title; ?> | Powered by Filmaffinity" />
+            <meta name="twitter:description" content="<?php echo $description; ?>" />
+            <?php if (isset($result['films'][0]['image'])) { ?>
+                <meta name="twitter:image" content="<?php echo $result['films'][0]['image']; ?>" />
+            <?php } ?>
+
+            <meta property="og:type" content="website"/>
+            <meta property="og:site_name" content="Project by @ojoven"/>
+            <meta property="og:url" content="<?php echo $result['url']; ?>"/>
+            <meta property="og:title" content="<?php echo $title; ?> | Powered by Filmaffinity"/>
+            <?php if (isset($result['films'][0]['image'])) { ?>
+                <meta property="og:image" content="<?php echo $result['films'][0]['image']; ?>"/>
+            <?php } ?>
+            <meta property="og:description" content="<?php echo $description; ?>">
+
+        <?php } ?>
+
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
         <link href='http://fonts.googleapis.com/css?family=Raleway:400,700,100' rel='stylesheet' type='text/css'>
@@ -37,7 +60,7 @@ $title = (isset($result)) ? "Las mejores películas de " . $result['name'] : "La
             <div class="content">
                 <div id="title"><?php echo $title; ?></div>
                 <span id="subtitle">
-                    Toy project by <a href="http://twitter.com/ojoven" target="_blank">@ojoven</a>, powered by Filmaffinity
+                    Project by <a href="http://twitter.com/ojoven" target="_blank">@ojoven</a>, powered by Filmaffinity
                 </span>
                 <input type="text" id="search" placeholder="Busca por actor o director..." value="">
                 <span id="to-random-container">
