@@ -1,7 +1,7 @@
 <?php if ($result) { ?>
 
     <div class="single-header">
-        <span class="type"><?php echo $result['type_string']; ?></span>
+        <span class="type" data-type="<?php echo $result['type']; ?>"><?php echo $result['type_string']; ?></span>
         <span class="title"><?php echo $result['name']; ?></span>
     </div>
     <ul>

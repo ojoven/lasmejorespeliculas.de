@@ -11,8 +11,44 @@ $(document).ready(function() {
     activateSearchResults();
     activateLoadRandomResult();
 
+    // We load random result on load
+    loadInitialResult();
+
 });
 
+
+/** INITIAL **/
+function loadInitialResult() {
+
+    var hash = window.location.hash;
+    if (hash) {
+        hash = hash.split("#!/")[1];
+
+        if (hash) {
+
+            if (hash.indexOf('s/')!==-1) { // search
+                hash = hash.split("s/")[1];
+                hash = hash.replace(/_/g, ' ');
+                search(hash);
+            } else if (hash.indexOf('d/')!==-1) { // director
+                hash = hash.split("d/")[1];
+                hash = hash.replace(/_/g, ' ');
+                loadSingleResult('director', hash);
+            } else if (hash.indexOf('a/')!==-1) { // actor
+                hash = hash.split("s/")[1];
+                hash = hash.replace(/_/g, ' ');
+                loadSingleResult('actor', hash);
+            }
+
+            return false;
+
+        }
+
+    }
+
+    loadRandomResult();
+
+}
 
 
 /** SEARCH **/
@@ -56,6 +92,8 @@ function search($query) {
 
         $("#loader").hide();
         $("#results").html(response);
+
+        setHashtagURL("search", $query);
         activateLinkResults();
 
     });
@@ -67,27 +105,37 @@ function activateLinkResults() {
 
     $(".to-single").off().on('click', function() {
 
-        $("#loader").show();
-        $("#results").html('');
+        var type = $(this).data('type');
+        var name = $(this).data('name');
 
-        var url = urlBase + "html/single";
-        var data = {};
-        data.type = $(this).data('type');
-        data.name = $(this).data('name');
-
-        $.get(url, data, function(response) {
-
-            $("#loader").hide();
-            $("#results").html(response);
-
-            var name = $("#results .single-header .title").html();
-            $("#search").val(name);
-
-            activateLinkResults();
-
-        });
+        loadSingleResult(type, name);
 
         return false;
+
+    });
+
+}
+
+function loadSingleResult(type, name) {
+
+    $("#loader").show();
+    $("#results").html('');
+
+    var url = urlBase + "html/single";
+    var data = {};
+    data.type = type;
+    data.name = name;
+
+    $.get(url, data, function(response) {
+
+        $("#loader").hide();
+        $("#results").html(response);
+        $("#search").val(data.name);
+
+        setHashtagURL(data.type, data.name);
+        updateMeta(data.type, data.name);
+
+        activateLinkResults();
 
     });
 
@@ -98,30 +146,61 @@ function activateLoadRandomResult() {
 
     $("#to-random").off().on('click', function() {
 
-        $("#loader").show();
-        $("#results").html('');
-
-        var url = urlBase + "html/random";
-
-        $.get(url, function(response) {
-
-            $("#loader").hide();
-            $("#results").html(response);
-
-            var name = $("#results .single-header .title").html();
-            $("#search").val(name);
-
-            activateLinkResults();
-
-        });
-
+        loadRandomResult();
         return false;
 
     });
 
 }
 
-// AUXILIARS
+function loadRandomResult() {
+
+    $("#loader").show();
+    $("#results").html('');
+
+    var url = urlBase + "html/random";
+
+    $.get(url, function(response) {
+
+        $("#loader").hide();
+        $("#results").html(response);
+
+        var name = $("#results .single-header .title").html();
+        var type = $("#results .single-header .type").data('type');
+        $("#search").val(name);
+
+        setHashtagURL(type, name);
+        activateLinkResults();
+        updateMeta(type, name);
+
+    });
+
+}
+
+/** URL **/
+function setHashtagURL(type, name) {
+
+    if (type == 'director') {
+        name = name.replace(/ /g, '_');
+        window.location.hash = "!/d/" + encodeURIComponent(name);
+    }  else if (type == 'actor') {
+        name = name.replace(/ /g, '_');
+        window.location.hash = "!/a/" + encodeURIComponent(name);
+    } else if (type == 'search') {
+        name = name.replace(/ /g, '_');
+        window.location.hash = "!/s/" + encodeURIComponent(name);
+    }
+
+}
+
+/** META **/
+function updateMeta(type, name) {
+
+    document.title = "Las mejores películas de " + name + " | Powered by Filmaffinity";
+
+}
+
+/** AUXILIARS **/
 var delay = (function(){
     var timer = 0;
     return function(callback, ms){

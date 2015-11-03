@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\DB;
 
 class Result extends Model {
 
-    const MAX_RESULTS = 20;
+    const MAX_RESULTS = 10;
 
     /** SINGLE **/
     public function getSingleResult($type, $name) {
@@ -36,13 +36,13 @@ class Result extends Model {
     public function searchResults($query) {
 
         // Search directors
-        $directors = Director::whereRaw('LOWER(name) LIKE \'%' . strtolower($query) . '%\'')->select('name', DB::raw('count(*) as total'))->groupBy('name')->get()->toArray();
-        $directors = array_slice($directors, 0, self::MAX_RESULTS);
+        $directors = Director::whereRaw('LOWER(name) LIKE \'%' . strtolower($query) . '%\'')->select('name', DB::raw('count(*) as total'))->orderBy('total', 'desc')->groupBy('name')->get()->toArray();
+        $directors = array_slice($directors, 0, self::MAX_RESULTS/2);
         $directors = $this->_parseResults($directors, 'director');
 
         // Search cast
-        $cast = Cast::whereRaw('LOWER(name) LIKE \'%' . strtolower($query) . '%\'')->select('name', DB::raw('count(*) as total'))->groupBy('name')->get()->toArray();
-        $cast = array_slice($cast, 0, self::MAX_RESULTS);
+        $cast = Cast::whereRaw('LOWER(name) LIKE \'%' . strtolower($query) . '%\'')->select('name', DB::raw('count(*) as total'))->orderBy('total', 'desc')->groupBy('name')->get()->toArray();
+        $cast = array_slice($cast, 0, self::MAX_RESULTS/2);
         $cast = $this->_parseResults($cast, 'actor');
 
         // Mix

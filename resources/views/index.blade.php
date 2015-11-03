@@ -34,7 +34,7 @@
                 <span id="subtitle">
                     Toy project by <a href="http://twitter.com/ojoven" target="_blank">@ojoven</a>, powered by Filmaffinity
                 </span>
-                <input type="text" id="search" placeholder="Busca por actor o director..." value="<?php echo $result['name']; ?>">
+                <input type="text" id="search" placeholder="Busca por actor o director..." value="">
                 <span id="to-random-container">
                     <a id="to-random" href="#">
                         Sugiéreme al azar
@@ -42,8 +42,6 @@
                     </a>
                 </span>
                 <div id="results">
-
-                    @include('single')
 
                 </div>
                 <div id="loader"></div>
