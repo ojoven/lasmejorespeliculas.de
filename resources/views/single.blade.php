@@ -23,6 +23,7 @@
                         <span class="cast">
                             <?php
                             $cast = explode(", ", $film['cast_string']);
+                            $cast = array_slice($cast, 0, 6);
                             foreach ($cast as $index=>$actor) { ?>
                             <a class="sub-result to-single" href="#" data-type="actor" data-name="<?php echo $actor; ?>">
                                 <?php echo $actor; ?>

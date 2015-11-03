@@ -3,6 +3,9 @@ $(document).ready(function() {
     // Fast Click
     FastClick.attach(document.body);
 
+    // Onclear
+    $("#search").addClear({ top:'2px', right:'10px' });
+
     // Activate link, search and random
     activateLinkResults();
     activateSearchResults();
@@ -22,14 +25,21 @@ function activateSearchResults() {
         $("#loader").show();
 
         var avoidChars = [16, 37, 38, 39, 40, 27];
-
         if (avoidChars.indexOf(e.which)==-1) {
+
+            $("#results").html('');
 
             var selector = $(this);
             delay(function(){
                 var value = selector.val();
-                search(value);
+                if (value.trim().length>0) {
+                    search(value);
+                } else {
+                    $("#loader").hide();
+                }
             }, waiting);
+        } else {
+            $("#loader").hide();
         }
 
     });
@@ -37,8 +47,6 @@ function activateSearchResults() {
 }
 
 function search($query) {
-
-    $("#results").html('');
 
     var url = urlBase + "html/search";
     var data = {};
@@ -72,6 +80,9 @@ function activateLinkResults() {
             $("#loader").hide();
             $("#results").html(response);
 
+            var name = $("#results .single-header .title").html();
+            $("#search").val(name);
+
             activateLinkResults();
 
         });
@@ -96,6 +107,9 @@ function activateLoadRandomResult() {
 
             $("#loader").hide();
             $("#results").html(response);
+
+            var name = $("#results .single-header .title").html();
+            $("#search").val(name);
 
             activateLinkResults();
 

@@ -19,4 +19,8 @@
 
     </ul>
 
-<?php } ?>
+<?php } else { ?>
+
+    <div class="no-results">Oooops! No encontramos nada</div>
+
+<?php }?>

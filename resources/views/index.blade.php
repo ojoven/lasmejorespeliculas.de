@@ -3,9 +3,6 @@
     <head>
         <title>Las mejores películas de... | Powered by Filmaffinity</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-        <script type='application/javascript' src='js/vendor/fastclick.js'></script>
-        <script type="text/javascript" src="js/app.js"></script>
 
         <link href='http://fonts.googleapis.com/css?family=Raleway:400,700,100' rel='stylesheet' type='text/css'>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
@@ -37,7 +34,7 @@
                 <span id="subtitle">
                     Toy project by <a href="http://twitter.com/ojoven" target="_blank">@ojoven</a>, powered by Filmaffinity
                 </span>
-                <input type="search" id="search" placeholder="Busca por actor o director...">
+                <input type="text" id="search" placeholder="Busca por actor o director..." value="<?php echo $result['name']; ?>">
                 <span id="to-random-container">
                     <a id="to-random" href="#">
                         Sugiéreme al azar
@@ -53,9 +50,25 @@
             </div>
         </div>
 
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+        <script type='application/javascript' src='js/vendor/fastclick.js'></script>
+        <script type='application/javascript' src='js/vendor/addclear.min.js'></script>
+        <script type="text/javascript" src="js/app.js"></script>
+
         <script>
 
             var urlBase = "<?php echo url() . "/"; ?>";
+
+        </script>
+
+        <script>
+            (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+            })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+            ga('create', 'UA-19697350-2', 'auto');
+            ga('send', 'pageview');
 
         </script>
 
