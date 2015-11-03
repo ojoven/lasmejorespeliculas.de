@@ -63,6 +63,13 @@ class Functions {
     }
 
     /** DB **/
+    public static function selectDB($db, $query) {
+
+        $result = $db->query($query);
+        return $result;
+
+    }
+
     public static function insertDB($db, $tableName, $data) {
 
         $dataParsed = self::implodeindexesvalues($data);

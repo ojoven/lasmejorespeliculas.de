@@ -77,6 +77,7 @@ $title = (isset($result)) ? "Las mejores películas de " . $result['name'] : "La
                     <?php } ?>
                 </div>
                 <div id="loader"></div>
+                <div id="last">Última vez que recojimos datos de Filmaffinity: <?php echo \App\Lib\Functions::getLastCronDate(); ?></div>
             </div>
         </div>
 

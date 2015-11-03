@@ -180,4 +180,20 @@ a {
   margin: 30px auto;
 }
 
+#last {
+
+  bottom: 0;
+  padding: 5px;
+  color: #999;
+  display: block;
+  font-size: 11px;
+  left: 0;
+  margin: 0 auto;
+  position: fixed;
+  right: 0;
+  text-align: center;
+  background: #fff;
+
+}
+
 @import 'queries/mobile';

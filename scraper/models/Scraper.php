@@ -6,6 +6,63 @@ require_once __DIR__. '/../lib/vendor/db.php';
 
 class Scraper {
 
+    /** LAST FILMS **/
+    public function scrapeLastFilms() {
+
+        $year = date("Y");
+        $page = 1;
+
+        $db = new Database(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
+
+        while (true) {
+
+            $pageFilms = $this->_retrieveFilmListPage($page, $year);
+
+            // Exit the loop when there's empty return
+            if (trim($pageFilms)=="") break;
+
+            $films = $this->_parseFilmListPage($pageFilms);
+
+            foreach ($films as $film) {
+
+                $filmHtml = $this->_retrieveFilmSingleHtml($film['id']);
+                $filmObject = $this->parseFilmSingle($filmHtml, $film['id'], $film['position']);
+
+                // First we check if the film is already saved
+                $db->connect();
+                $query = "SELECT id FROM films WHERE id = '" . $film['id'] . "'";
+                $result = Functions::selectDB($db, $query);
+                if ($result) {
+
+                    // If added, do nothing
+
+                } else {
+
+                    // Not added yet, let's add it!
+                    Functions::log($film['name']);
+
+                    // Save the film
+                    $this->_saveFilmDB($db, $filmObject);
+
+                    // Retrieve and save the reviews
+                    $filmHtml = $this->_retrieveFilmReviewsHtml($film['id']);
+                    $filmReviews = $this->parseFilmReviews($filmHtml, $film['id']);
+
+                    // Let's store in the DB
+                    $this->_saveFilmReviewsDB($db, $filmReviews);
+                }
+            }
+
+            $page++;
+
+        }
+
+        // We save in a file the last time we've passed this script
+        $pathLastTimeRun = SCRAPER_ROOT_PATH . "/last";
+        file_put_contents($pathLastTimeRun, time());
+
+    }
+
     /** FILM SINGLE **/
     public function scrapeFilmSingle() {
 
@@ -359,7 +416,7 @@ class Scraper {
                 $filmReviews[$page] = $response['body'];
 
                 $pageFilmReviewsPath = SCRAPER_ROOT_PATH . "/htmls/reviews/" . $firstChar . "/" . $id . "_" . $page . ".html";
-                file_put_contents($pageFilmReviewsPath, $filmReviews[$page]);
+                //file_put_contents($pageFilmReviewsPath, $filmReviews[$page]); // uncomment to save the reviews html
             }
 
             $page++;
@@ -429,7 +486,6 @@ class Scraper {
             if (trim($pageFilms)=="") break;
 
             $this->_storeHtmlFilmListPage($pageFilms, $page);
-            $this->_parseFilmListPage($pageFilms, $page);
 
             $page++;
 
@@ -437,10 +493,11 @@ class Scraper {
 
     }
 
-    private function _retrieveFilmListPage($page) {
+    private function _retrieveFilmListPage($page, $year = false) {
 
         // No documentaries nor TV series
         $baseUrl = "http://www.filmaffinity.com/es/topgen.php?nodoc&notvse";
+        if ($year) $baseUrl .= "&fromyear=" . $year . "&toyear=" . $year;
         $numElementsPerPage = 30;
 
         $pageFilePath = SCRAPER_ROOT_PATH . "/htmls/pages/page_" . $page . ".html";
