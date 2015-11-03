@@ -1,6 +1,20 @@
 $(document).ready(function() {
 
+    // Fast Click
+    FastClick.attach(document.body);
+
+    // Activate link, search and random
     activateLinkResults();
+    activateSearchResults();
+    activateLoadRandomResult();
+
+});
+
+
+
+/** SEARCH **/
+function activateSearchResults() {
+
     var waiting = 300;
 
     $("#search").on('keyup', function(e) {
@@ -20,15 +34,7 @@ $(document).ready(function() {
 
     });
 
-});
-
-var delay = (function(){
-    var timer = 0;
-    return function(callback, ms){
-        clearTimeout (timer);
-        timer = setTimeout(callback, ms);
-    };
-})();
+}
 
 function search($query) {
 
@@ -48,12 +54,10 @@ function search($query) {
 
 }
 
+/** LINKING **/
 function activateLinkResults() {
 
-    console.log('activate pre');
     $(".to-single").off().on('click', function() {
-
-        console.log('activate post');
 
         $("#loader").show();
         $("#results").html('');
@@ -74,5 +78,36 @@ function activateLinkResults() {
 
     });
 
+}
+
+/** RANDOM **/
+function activateLoadRandomResult() {
+
+    $("#to-random").off().on('click', function() {
+
+        $("#loader").show();
+        $("#results").html('');
+
+        var url = urlBase + "html/random";
+
+        $.get(url, function(response) {
+
+            $("#loader").hide();
+            $("#results").html(response);
+
+            activateLinkResults();
+
+        });
+
+    });
 
 }
+
+// AUXILIARS
+var delay = (function(){
+    var timer = 0;
+    return function(callback, ms){
+        clearTimeout (timer);
+        timer = setTimeout(callback, ms);
+    };
+})();

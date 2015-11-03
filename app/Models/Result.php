@@ -73,8 +73,8 @@ class Result extends Model {
 
     }
 
-    /** GET RANDOM RESULTS **/
-    public function getRandomResultHome() {
+    /** GET RANDOM RESULT **/
+    public function getRandomResult() {
 
         $numTotalFilms = 1000;
 

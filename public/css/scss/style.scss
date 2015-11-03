@@ -41,7 +41,19 @@ a {
   box-sizing: border-box;
   font-size: 20px;
   padding: 10px 14px;
-  width: 360px;
+  width: 400px;
+}
+
+#to-random-container {
+  width: 400px;
+  display: block;
+  text-align: right;
+  margin: 5px auto;
+}
+
+#to-random {
+  font-size: 12px;
+  text-decoration: underline;
 }
 
 #results {
@@ -56,6 +68,9 @@ a {
 
   .result a {
 
+    width: 400px;
+    margin: 0 auto;
+    box-sizing: border-box;
     padding: 10px;
     border-bottom: 1px solid #ccc;
     display: block;
@@ -70,7 +85,11 @@ a {
   }
 
   .single-header {
-    margin: 15px;
+    background: #f6f6f6;
+    box-sizing: border-box;
+    margin: 15px auto;
+    padding: 10px;
+    width: 400px;
     .type {
       color: #999;
       font-size: 16px;

@@ -33,16 +33,20 @@ a { color: #444; text-decoration: none; }
 #subtitle a { text-decoration: underline; color: #999; }
 #subtitle a:hover, #subtitle a:focus { color: #444; }
 
-#search { border: 1px solid #ccc; border-radius: 0; box-sizing: border-box; font-size: 20px; padding: 10px 14px; width: 360px; }
+#search { border: 1px solid #ccc; border-radius: 0; box-sizing: border-box; font-size: 20px; padding: 10px 14px; width: 400px; }
+
+#to-random-container { width: 400px; display: block; text-align: right; margin: 5px auto; }
+
+#to-random { font-size: 12px; text-decoration: underline; }
 
 #results { margin-top: 20px; }
 #results .result:nth-child(even) a { background: #fdfdfd; }
-#results .result a { padding: 10px; border-bottom: 1px solid #ccc; display: block; }
+#results .result a { width: 400px; margin: 0 auto; box-sizing: border-box; padding: 10px; border-bottom: 1px solid #ccc; display: block; }
 #results .result a:hover, #results .result a:focus { background: #f0f0f0; }
 #results .result a .type { display: block; color: #999; }
 #results .result a .title { display: block; }
 #results .result a .total { display: block; }
-#results .single-header { margin: 15px; }
+#results .single-header { background: #f6f6f6; box-sizing: border-box; margin: 15px auto; padding: 10px; width: 400px; }
 #results .single-header .type { color: #999; font-size: 16px; }
 #results .single-header .title { display: block; font-size: 22px; }
 #results .film { width: 400px; margin: 5px auto; padding: 10px; border-bottom: 1px solid #ccc; }
@@ -61,7 +65,8 @@ a { color: #444; text-decoration: none; }
 
 #loader { background: url(../img/loader.gif) no-repeat 0 0; width: 48px; height: 48px; display: none; margin: 30px auto; }
 
-@media all and (max-width: 640px) { #search { width: 100%; }
+@media all and (max-width: 640px) { #subtitle { font-size: 11px; }
+  #search, #to-random-container, #results .single-header, #results .result a { width: 100%; }
   #results .film { width: 100%; box-sizing: border-box; }
   #results .film .left { width: 70px; }
   #results .film .right { width: calc(95% - 70px); }

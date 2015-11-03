@@ -13,7 +13,7 @@ class IndexController extends Controller {
     public function index() {
 
         $resultModel = new Result();
-        $result = $resultModel->getRandomResultHome();
+        $result = $resultModel->getRandomResult();
 
         $data['result'] = $result;
         return view('index', $data);

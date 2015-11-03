@@ -23,6 +23,16 @@ class HtmlController extends Controller {
         return view('results', $data);
     }
 
+    public function getRandom() {
+
+        $resultModel = new Result();
+        $result = $resultModel->getRandomResult();
+
+        $data['result'] = $result;
+        return view('single', $data);
+
+    }
+
     public function getSingle() {
 
         $type = $_GET['type'];
