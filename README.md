@@ -1,23 +1,10 @@
-FILMAFFINITY SEARCH ADVANCED
+Filmaffinity Search and Rank
 =============================
 
-The aim of this project is to offer an answer to a question that currently Filmaffinity does not offer by itself:
+The aim of this site is to offer an answer to a question that currently Filmaffinity does not offer by itself:
 * Which are the most valued films for a director / actor / actress?
 
-Apart from that, we may create additional value for searches / film pages by mixing all the data from Filmaffinity
-
-Roadmap
----------------
-At this moment we're scraping Filmaffinity to retrieve all the films and to extract the semantic information from them:
-* Name
-* Director
-* Actors / Actresses
-* Etc.
-
-All the films HTMLs from Filmaffinity are in scraper/htmls/films.tar.gz
-
-Following steps
-* To create the DB for all the data extracted
-* To create the pages: home, search results, result page (director/actor), film page
+You can download the complete Filmaffinity DB from:
+https://s3-eu-west-1.amazonaws.com/filmaffinity/db.tar.gz
 
 All rights reserved to Filmaffinity S.L.
