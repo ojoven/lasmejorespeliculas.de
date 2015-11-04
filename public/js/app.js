@@ -184,13 +184,13 @@ function setHashtagURL(type, name) {
 
     if (type == 'director') {
         name = name.replace(/ /g, '_');
-        window.location.hash = "!/d/" + encodeURIComponent(name);
+        window.location.hash = "!/d/" + name;
     }  else if (type == 'actor') {
         name = name.replace(/ /g, '_');
-        window.location.hash = "!/a/" + encodeURIComponent(name);
+        window.location.hash = "!/a/" + name;
     } else if (type == 'search') {
         name = name.replace(/ /g, '_');
-        window.location.hash = "!/s/" + encodeURIComponent(name);
+        window.location.hash = "!/s/" + name;
     }
 
 }
