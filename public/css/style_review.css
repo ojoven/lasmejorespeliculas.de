@@ -1,0 +1,10 @@
+body { font-family: 'Raleway', sans-serif; background: #fff; }
+
+.review { width: 800px; border: 1px solid #ccc; margin: 30px; padding: 20px; }
+
+#review-title { font-weight: bold; font-size: 26px; margin-bottom: 10px; }
+#review-title #review-rating { color: #a71600; }
+
+#review-body { font-size: 16px; height: 600px; }
+
+.film { font-style: italic; text-align: right; margin-top: 15px; font-size: 24px; }

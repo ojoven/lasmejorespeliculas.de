@@ -5,7 +5,8 @@ define('BOT_ROOT_PATH', __DIR__);
 require_once 'config.php';
 require_once 'lib/vendor/db.php';
 
-numBadReviews();
+//numBadReviews();
+randomReview();
 
 function numBadReviews() {
 
@@ -46,7 +47,7 @@ function randomReview() {
         $db->connect();
         $result = $db->query("SELECT * FROM films WHERE position = " . $randIndex);
         $film = $db->fetch_array_assoc($result);
-        if (!$film) continue;
+        //if (!$film) continue;
 
         // Let's get film's bad review
         $db->connect();
