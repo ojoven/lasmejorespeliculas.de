@@ -11,6 +11,9 @@ scraper/htmls/pages
 scraper/htmls/films
 scraper/htmls/reviews
 
+# Bot
+bot/config.php
+
 # Laravel
 /vendor
 /node_modules
