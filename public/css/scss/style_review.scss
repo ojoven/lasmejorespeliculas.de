@@ -1,6 +1,6 @@
 body {
-  font-family: 'Raleway', sans-serif;
   background: #fff;
+  font-family: 'Raleway', sans-serif;
 }
 
 .review {
@@ -11,8 +11,9 @@ body {
 }
 
 #review-title {
+  font-family: 'RalewayBold', sans-serif;
   font-weight: bold;
-  font-size: 26px;
+  font-size: 30px;
   margin-bottom: 10px;
   #review-rating {
     color: #a71600;
@@ -25,7 +26,6 @@ body {
 }
 
 .film {
-  font-style: italic;
   text-align: right;
   margin-top: 15px;
   font-size: 24px;

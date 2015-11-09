@@ -8,13 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Review extends Model {
 
-    public function getRandomBadReview($minimumReview = 4) {
+    public function getRandomBadReview($minimumReview = 3) {
 
         while (true) {
 
-            // First we select a random film from the first 1000
-            $randIndex = rand(1, 1000);
-            $film = Film::where('position', '=', $randIndex)->first()->toArray();
+            $film = $this->_getFilmForReview();
             if (!$film) continue;
 
             // Let's get film's bad review
@@ -33,6 +31,15 @@ class Review extends Model {
             }
 
         }
+
+    }
+
+    private function _getFilmForReview() {
+
+        // We'll retrieve popular films (based on the num of votes)
+        $randIndex = rand(1,500);
+        $film = Film::where('rating', '>=', '7')->orderBy('num_votes', 'desc')->skip($randIndex)->first();
+        return $film;
 
     }
 

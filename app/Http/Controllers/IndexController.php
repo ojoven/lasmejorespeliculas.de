@@ -60,7 +60,7 @@ class IndexController extends Controller {
     public function randombadreview() {
 
         $reviewModel = new Review();
-        $review = $reviewModel->getRandomBadReview(4);
+        $review = $reviewModel->getRandomBadReview(3);
 
         $data['review'] = $review;
         return view('review', $data);

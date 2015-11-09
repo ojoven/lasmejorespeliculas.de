@@ -2,7 +2,20 @@
 <html>
     <head>
         <title>Review</title>
-        <link href='http://fonts.googleapis.com/css?family=Raleway:400,700,100' rel='stylesheet' type='text/css'>
+        <style>
+
+            @font-face {
+                font-family: 'RalewayBold';
+                font-weight: bold;
+                src: url(http://filmaffinity.ojoven.es/css/fonts/Roboto_Condensed/RobotoCondensed-Bold.woff) format('woff');
+            }
+
+            @font-face {
+                font-family: 'Raleway';
+                src: url(http://filmaffinity.ojoven.es/css/fonts/Raleway/Raleway-Regular.woff) format('woff');
+            }
+
+        </style>
         <link href="/css/style_review.css" rel="stylesheet">
     </head>
     <body>
