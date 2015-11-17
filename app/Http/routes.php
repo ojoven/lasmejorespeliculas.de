@@ -24,4 +24,5 @@ Route::controller('html', 'HtmlController');
 Route::get('a/{name}', 'IndexController@actor');
 Route::get('d/{name}', 'IndexController@director');
 Route::get('s/{query}', 'IndexController@search');
+Route::get('r/{review}', 'IndexController@review');
 Route::get('randombadreview', 'IndexController@randombadreview');
