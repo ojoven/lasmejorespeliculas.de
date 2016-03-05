@@ -24,5 +24,10 @@ Route::controller('html', 'HtmlController');
 Route::get('a/{name}', 'IndexController@actor');
 Route::get('d/{name}', 'IndexController@director');
 Route::get('s/{query}', 'IndexController@search');
+
+// Screenshots
+Route::get('p/{type}/{name}', 'IndexController@generateprofile');
+
+// FilmDissafinityBot
 Route::get('r/{review}', 'IndexController@review');
 Route::get('randombadreview', 'IndexController@randombadreview');

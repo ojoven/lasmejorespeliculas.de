@@ -27,7 +27,8 @@ class IndexController extends Controller {
         $result = $resultModel->getSingleResult($type, $name);
 
         $data['result'] = $result;
-        return view('index', $data);
+        $view = (isset($_GET['profile'])) ? "profile" : "index";
+        return view($view, $data);
 
     }
 
@@ -39,7 +40,8 @@ class IndexController extends Controller {
         $result = $resultModel->getSingleResult($type, $name);
 
         $data['result'] = $result;
-        return view('index', $data);
+        $view = (isset($_GET['profile'])) ? "profile" : "index";
+        return view($view, $data);
 
     }
 
@@ -54,6 +56,34 @@ class IndexController extends Controller {
 
         $data['results'] = $results;
         return view('index', $data);
+
+    }
+
+    /** Screenshots **/
+    public function generateprofile($type, $name) {
+
+        $profilePath = base_path() . "/public/img/profiles/" . $type . "_" . $name . ".jpg";
+        if (!file_exists($profilePath)) {
+
+            // We generate the screenshot if it doesn't exist yet
+            $url = "http://filmaffinity.local.host/" . $type . "/" . $name . "?profile";
+            $pathToPhantomJs = app_path() . "/Lib/phantomjs/renderpanel.js";
+            $extension = "jpg";
+
+            $command = "phantomjs --ssl-protocol=any " . $pathToPhantomJs .  " " . $url . " " . $profilePath . " " . $extension;
+            $return = shell_exec($command);
+
+            // Permissions
+            chmod($profilePath, 0755);
+
+        }
+
+        // We serve the image
+        header('Content-Type: image/jpeg');
+        if (!file_exists($profilePath)) throw new Exception("We couldn't generate the picture, sorry");
+        $img = imagecreatefromjpeg($profilePath);
+        imagejpeg($img);
+        die();
 
     }
 

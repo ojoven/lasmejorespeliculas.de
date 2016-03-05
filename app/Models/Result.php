@@ -15,6 +15,8 @@ class Result extends Model {
     /** SINGLE **/
     public function getSingleResult($type, $name) {
 
+        $filmIds = array();
+
         switch ($type) {
 
             case 'director':
