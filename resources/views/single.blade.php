@@ -7,6 +7,10 @@
 
     <div class="social-header">
 
+        <a id="to-profile-image" class="icon-social" data-href="<?php echo $result['url_profile']; ?>">
+            ver imagen perfil<i></i>
+        </a>
+
         <div class="fb-like" data-href="<?php echo $result['url']; ?>" data-layout="button_count" data-action="like" data-show-faces="false" data-share="false"></div>
 
         <a href="https://twitter.com/share" class="twitter-share-button" data-url="<?php echo $result['url']; ?>" data-text="<?php echo $result['text_twitter']; ?>" data-related="ojoven" data-lang="es">Twittear</a>

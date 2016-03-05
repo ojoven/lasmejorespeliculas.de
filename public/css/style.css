@@ -51,6 +51,8 @@ a { color: #444; text-decoration: none; }
 #results .single-header .title { display: block; font-size: 22px; }
 #results .social-header { width: 400px; margin: 10px auto; text-align: right; }
 #results .social-header .fb-like { position: relative; top: -2px; }
+#results .social-header .icon-social i { background: no-repeat center right; padding-right: 14px; }
+#results .social-header #to-profile-image i { background-image: url(../img/profile_card.png); }
 #results .film { width: 400px; margin: 5px auto; padding: 10px; border-bottom: 1px solid #ccc; }
 #results .film .position { color: #ccc; float: left; font-size: 35px; margin-right: 30px; }
 #results .film .left { float: left; width: 90px; }

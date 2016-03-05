@@ -109,6 +109,13 @@ a {
       position:relative;
       top:-2px;
     }
+    .icon-social i {
+      background: no-repeat center right;
+      padding-right: 14px;
+    }
+    #to-profile-image i {
+      background-image: url(../img/profile_card.png);
+    }
   }
 
   .film {
@@ -186,6 +193,7 @@ a {
   display: none;
   margin: 30px auto;
 }
+
 
 #last {
 

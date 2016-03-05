@@ -121,6 +121,7 @@ class Result extends Model {
         $result['type_string'] = $this->_getStringFromType($type);
         $result['name'] = $name;
         $result['url'] = url() . "/" . $type[0] . "/" . str_replace(" ", "_", $name);
+        $result['url_profile'] = url() . "/p/" . $type[0] . "/" . str_replace(" ", "_", $name);
         $result['films'] = array();
         if (isset($filmIds) && $filmIds) {
             $result['films'] = Film::orderBy('rating', 'desc')->find($filmIds)->toArray();
