@@ -13,7 +13,7 @@ $title = (isset($result)) ? "Las mejores películas de " . $result['name'] : "La
 
             <meta name="twitter:card" content="summary" />
             <meta name="twitter:site" content="@ojoven" />
-            <meta name="twitter:title" content="<?php echo $title; ?> | Powered by Filmaffinity" />
+            <meta name="twitter:title" content="<?php echo $title; ?>" />
             <meta name="twitter:description" content="<?php echo $description; ?>" />
             <?php if (isset($result['films'][0]['image'])) { ?>
                 <meta name="twitter:image" content="<?php echo $result['films'][0]['image']; ?>" />
@@ -60,7 +60,7 @@ $title = (isset($result)) ? "Las mejores películas de " . $result['name'] : "La
             <div class="content">
                 <div id="title"><?php echo $title; ?></div>
                 <span id="subtitle">
-                    Project by <a href="http://twitter.com/ojoven" target="_blank">@ojoven</a>, powered by Filmaffinity
+                    Project by <a href="http://twitter.com/ojoven" target="_blank">@ojoven</a>, data by Filmaffinity
                 </span>
                 <input type="text" id="search" placeholder="Busca por actor o director..." value="">
                 <span id="to-random-container">

@@ -9,6 +9,11 @@ class Scraper {
     /** LAST FILMS **/
     public function scrapeLastFilms() {
 
+        // NOT WORKING :(
+        return;
+
+        $yearInit = 2015;
+        $yearEnd = 2016;
         $year = date("Y");
         $page = 1;
 
@@ -16,7 +21,7 @@ class Scraper {
 
         while (true) {
 
-            $pageFilms = $this->_retrieveFilmListPage($page, $year);
+            $pageFilms = $this->_retrieveFilmListPage($page, $yearInit, $yearEnd);
 
             // Exit the loop when there's empty return
             if (trim($pageFilms)=="") break;
@@ -25,9 +30,6 @@ class Scraper {
 
             foreach ($films as $film) {
 
-                $filmHtml = $this->_retrieveFilmSingleHtml($film['id']);
-                $filmObject = $this->parseFilmSingle($filmHtml, $film['id'], $film['position']);
-
                 // First we check if the film is already saved
                 $db->connect();
                 $query = "SELECT id FROM films WHERE id = '" . $film['id'] . "'";
@@ -35,8 +37,12 @@ class Scraper {
                 if ($result) {
 
                     // If added, do nothing
+                    Functions::log($film['name'] . " already added");
 
                 } else {
+
+                    $filmHtml = $this->_retrieveFilmSingleHtml($film['id']);
+                    $filmObject = $this->parseFilmSingle($filmHtml, $film);
 
                     // Not added yet, let's add it!
                     Functions::log($film['name']);
@@ -58,15 +64,15 @@ class Scraper {
         }
 
         // We save in a file the last time we've passed this script
-        $pathLastTimeRun = SCRAPER_ROOT_PATH . "/last";
-        file_put_contents($pathLastTimeRun, time());
+        //$pathLastTimeRun = SCRAPER_ROOT_PATH . "/last";
+        //file_put_contents($pathLastTimeRun, time());
 
     }
 
     /** FILM SINGLE **/
     public function scrapeFilmSingle() {
 
-        $numPages = 1090; // This number we've got after having run scrapeFilmList()
+        $numPages = 1123; // This number we've got after having run scrapeFilmList()
         for ($page = 1; $page <= $numPages; $page++) {
 
             Functions::log(PHP_EOL . "Page " . $page);
@@ -80,7 +86,7 @@ class Scraper {
 
                 $filmHtml = $this->_retrieveFilmSingleHtml($film['id']);
                 $this->_storeFilmSingleHtml($filmHtml, $film['id']);
-                $filmObject = $this->parseFilmSingle($filmHtml, $film['id'], $film['position']);
+                $filmObject = $this->parseFilmSingle($filmHtml, $film);
 
                 // Let's store in the DB
                 $db = new Database(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
@@ -92,16 +98,16 @@ class Scraper {
 
     }
 
-    public function parseFilmSingle($filmHtml, $id, $position) {
+    public function parseFilmSingle($filmHtml, $filmBasic) {
 
         $html = str_get_html($filmHtml);
 
-        $film['id'] = $id;
+        $film['id'] = $filmBasic['id'];
         $film['image'] = $html->find('#movie-main-image-container', 0)->find('img', 0)->getAttribute('src');
         $film['name'] = trim($html->find('#main-title', 0)->find('span', 0)->plaintext);
-        $film['rating'] = floatval(str_replace(",", ".", trim($html->find('#movie-rat-avg', 0)->plaintext)));
-        $film['num_votes'] = str_replace(".", "", trim($html->find('#movie-count-rat', 0)->find('span',0)->plaintext));
-        $film['position'] = $position;
+        $film['rating'] = $filmBasic['rating'];
+        $film['num_votes'] = $filmBasic['num_votes'];
+        $film['position'] = $filmBasic['position'];
 
         $movieInfos = $html->find('.movie-info');
 
@@ -338,17 +344,6 @@ class Scraper {
 
     }
 
-    private function _storeFilmSingleHtml($filmHtml, $id) {
-
-        // We'll save the HTMLs for if future additional parsing is needed
-        $firstChar = $id[0];
-        $pageSingleFilmPath = SCRAPER_ROOT_PATH . "/htmls/films/" . $firstChar . "/" . $id . ".html";
-        if (!file_exists($pageSingleFilmPath)) {
-            file_put_contents($pageSingleFilmPath, $filmHtml);
-        }
-
-    }
-
     private function _retrieveFilmSingleHtml($id) {
 
         // First char (to avoid having all films stored in the same folder)
@@ -364,6 +359,17 @@ class Scraper {
         }
 
         return $filmHtml;
+
+    }
+
+    private function _storeFilmSingleHtml($filmHtml, $id) {
+
+        // We'll save the HTMLs for if future additional parsing is needed
+        $firstChar = $id[0];
+        $pageSingleFilmPath = SCRAPER_ROOT_PATH . "/htmls/films/" . $firstChar . "/" . $id . ".html";
+        if (!file_exists($pageSingleFilmPath)) {
+            file_put_contents($pageSingleFilmPath, $filmHtml);
+        }
 
     }
 
@@ -487,17 +493,18 @@ class Scraper {
 
             $this->_storeHtmlFilmListPage($pageFilms, $page);
 
+            Functions::log("Page " . $page);
             $page++;
 
         }
 
     }
 
-    private function _retrieveFilmListPage($page, $year = false) {
+    private function _retrieveFilmListPage($page, $yearInit = false, $yearEnd = false) {
 
         // No documentaries nor TV series
         $baseUrl = "http://www.filmaffinity.com/es/topgen.php?nodoc&notvse";
-        if ($year) $baseUrl .= "&fromyear=" . $year . "&toyear=" . $year;
+        if ($yearInit && $yearEnd) $baseUrl .= "&fromyear=" . $yearInit . "&toyear=" . $yearEnd;
         $numElementsPerPage = 30;
 
         $pageFilePath = SCRAPER_ROOT_PATH . "/htmls/pages/page_" . $page . ".html";
@@ -534,6 +541,10 @@ class Scraper {
             $film['image'] = $filmHtml->find('.mc-poster', 0)->find('img', 0)->getAttribute('src');
             $film['name'] = trim($filmHtml->find('.mc-title', 0)->find('a', 0)->plaintext);
             $film['link'] = $filmHtml->find('.mc-title', 0)->find('a', 0)->getAttribute('href');
+
+            // New, we'll be retrieving the rating info from the pages list
+            $film['rating'] = $filmHtml->find('.avg-rating', 0)->plaintext;
+            $film['num_votes'] = str_replace(".", "", trim(str_replace(" votos", "", $filmHtml->find('.rat-count', 0)->plaintext)));
 
             array_push($filmsPage, $film);
 

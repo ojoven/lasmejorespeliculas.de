@@ -7,8 +7,8 @@
 
     <div class="social-header">
 
-        <a id="to-profile-image" class="icon-social" data-href="<?php echo $result['url_profile']; ?>">
-            ver imagen perfil<i></i>
+        <a target="_blank" href="<?php echo $result['url_profile']; ?>" id="to-profile-image" class="icon-social">
+            TOP 5 (JPG)<i></i>
         </a>
 
         <div class="fb-like" data-href="<?php echo $result['url']; ?>" data-layout="button_count" data-action="like" data-show-faces="false" data-share="false"></div>

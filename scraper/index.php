@@ -4,9 +4,9 @@ require_once 'models/Scraper.php';
 
 // Let's retrieve and save the list of films
 // Taken from Filmaffinity TOP FA
-//$scraper = new Scraper();
+$scraper = new Scraper();
 //$scraper->scrapeFilmList();
-//$scraper->scrapeFilmSingle();
+$scraper->scrapeFilmSingle();
 //$scraper->scrapeFilmUserReviews();
 //$scraper->scrapeLastFilms();
 

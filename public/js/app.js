@@ -136,8 +136,8 @@ function loadSingleResult(type, name) {
 
         setHashtagURL(data.type, data.name);
         updateMeta(data.type, data.name);
-
         activateLinkResults();
+        updateSocialLinks();
 
     });
 
@@ -174,6 +174,7 @@ function loadRandomResult() {
         setHashtagURL(type, name);
         activateLinkResults();
         updateMeta(type, name);
+        updateSocialLinks();
 
     });
 
@@ -199,10 +200,16 @@ function setHashtagURL(type, name) {
 function updateMeta(type, name) {
 
     var title = "Las mejores películas de " + name;
-    document.title = title + " | Powered by Filmaffinity";
+    document.title = title;
     $("#title").html(title);
 
 }
+
+function updateSocialLinks() {
+    twttr.widgets.load();
+    FB.XFBML.parse();
+}
+
 
 /** AUXILIARS **/
 var delay = (function(){
