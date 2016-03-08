@@ -543,7 +543,7 @@ class Scraper {
             $film['link'] = $filmHtml->find('.mc-title', 0)->find('a', 0)->getAttribute('href');
 
             // New, we'll be retrieving the rating info from the pages list
-            $film['rating'] = $filmHtml->find('.avg-rating', 0)->plaintext;
+            $film['rating'] = floatval(str_replace(",", ".", trim($filmHtml->find('.avg-rating', 0)->plaintext)));
             $film['num_votes'] = str_replace(".", "", trim(str_replace(" votos", "", $filmHtml->find('.rat-count', 0)->plaintext)));
 
             array_push($filmsPage, $film);
