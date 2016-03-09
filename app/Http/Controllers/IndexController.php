@@ -66,7 +66,8 @@ class IndexController extends Controller {
         if (!file_exists($profilePath)) {
 
             // We generate the screenshot if it doesn't exist yet
-            $url = "http://filmaffinity.local.host/" . $type . "/" . $name . "?profile";
+            $urlBase = env('BASE_URL');
+            $url = $urlBase . "/" . $type . "/" . $name . "?profile";
             $pathToPhantomJs = app_path() . "/Lib/phantomjs/renderpanel.js";
             $extension = "jpg";
 
