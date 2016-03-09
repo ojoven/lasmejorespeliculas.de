@@ -177,6 +177,7 @@ function loadRandomResult() {
         activateLinkResults();
         updateMeta(type, name);
         updateSocialLinks();
+        ga('send', 'event', 'Films', 'random', name);
 
     });
 
