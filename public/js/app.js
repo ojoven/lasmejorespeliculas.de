@@ -97,6 +97,7 @@ function search($query) {
 
         setHashtagURL("search", $query);
         activateLinkResults();
+        ga('send', 'event', 'Films', 'search', $query);
 
     });
 
@@ -138,6 +139,7 @@ function loadSingleResult(type, name) {
         updateMeta(data.type, data.name);
         activateLinkResults();
         updateSocialLinks();
+        ga('send', 'event', 'Films', 'result', data.name);
 
     });
 
@@ -206,8 +208,8 @@ function updateMeta(type, name) {
 }
 
 function updateSocialLinks() {
-    twttr.widgets.load();
-    FB.XFBML.parse();
+    if (typeof twttr != "undefined") twttr.widgets.load();
+    if (typeof FB != "undefined") FB.XFBML.parse();
 }
 
 
