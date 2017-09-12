@@ -13,6 +13,7 @@ scraper/htmls/reviews
 
 # Screenshots
 public/img/profiles
+public/img/films
 
 # Bot
 bot/config.php

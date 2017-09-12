@@ -17,15 +17,17 @@ class Functions {
         return $output;
     }
 
-    public static function getURL($url, $params) {
+    public static function getURL($url, $params = array()) {
 
-        $url .= '?' . http_build_query($params);
+        if ($params) {
+            $url .= '?' . http_build_query($params);
+        }
 
         $ch = curl_init();
 
         curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($params));
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch,CURLOPT_USERAGENT,'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.13) Gecko/20080311 Firefox/2.0.0.13');
 
         $output = curl_exec($ch);
         curl_close ($ch);
@@ -58,7 +60,11 @@ class Functions {
 
     public static function log($message) {
 
-        echo $message . PHP_EOL;
+        if (is_string($message)) {
+            echo $message . PHP_EOL;
+        } else {
+            print_r($message);
+        }
 
     }
 

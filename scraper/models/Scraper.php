@@ -6,73 +6,12 @@ require_once __DIR__. '/../lib/vendor/db.php';
 
 class Scraper {
 
-    /** LAST FILMS **/
-    public function scrapeLastFilms() {
+       /** FILM SINGLE **/
+    public function scrapeFilmSingle($numPages) {
 
-        // NOT WORKING :(
-        return;
+        $numFilmsPerPage = 30;
+        $totalFilms = $numPages * $numFilmsPerPage; // Approximately
 
-        $yearInit = 2015;
-        $yearEnd = 2016;
-        $year = date("Y");
-        $page = 1;
-
-        $db = new Database(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
-
-        while (true) {
-
-            $pageFilms = $this->_retrieveFilmListPage($page, $yearInit, $yearEnd);
-
-            // Exit the loop when there's empty return
-            if (trim($pageFilms)=="") break;
-
-            $films = $this->_parseFilmListPage($pageFilms);
-
-            foreach ($films as $film) {
-
-                // First we check if the film is already saved
-                $db->connect();
-                $query = "SELECT id FROM films WHERE id = '" . $film['id'] . "'";
-                $result = Functions::selectDB($db, $query);
-                if ($result) {
-
-                    // If added, do nothing
-                    Functions::log($film['name'] . " already added");
-
-                } else {
-
-                    $filmHtml = $this->_retrieveFilmSingleHtml($film['id']);
-                    $filmObject = $this->parseFilmSingle($filmHtml, $film);
-
-                    // Not added yet, let's add it!
-                    Functions::log($film['name']);
-
-                    // Save the film
-                    $this->_saveFilmDB($db, $filmObject);
-
-                    // Retrieve and save the reviews
-                    $filmHtml = $this->_retrieveFilmReviewsHtml($film['id']);
-                    $filmReviews = $this->parseFilmReviews($filmHtml, $film['id']);
-
-                    // Let's store in the DB
-                    $this->_saveFilmReviewsDB($db, $filmReviews);
-                }
-            }
-
-            $page++;
-
-        }
-
-        // We save in a file the last time we've passed this script
-        //$pathLastTimeRun = SCRAPER_ROOT_PATH . "/last";
-        //file_put_contents($pathLastTimeRun, time());
-
-    }
-
-    /** FILM SINGLE **/
-    public function scrapeFilmSingle() {
-
-        $numPages = 1123; // This number we've got after having run scrapeFilmList()
         for ($page = 1; $page <= $numPages; $page++) {
 
             Functions::log(PHP_EOL . "Page " . $page);
@@ -80,13 +19,21 @@ class Scraper {
             $pageFilms = $this->_retrieveFilmListPage($page);
             $films = $this->_parseFilmListPage($pageFilms);
 
-            foreach ($films as $film) {
+            foreach ($films as $index => $film) {
 
-                Functions::log($film['name']);
+                $positionFilm = $index + 1 + (($page - 1) * $numFilmsPerPage);
+
+                $percentage = intval($positionFilm / $totalFilms * 100);
+                Functions::log($positionFilm . ' / ' . $totalFilms . ' (' . $percentage . '%) ' . $film['id'] . ' ' . $film['name']);
+
+                if ($this->isFilmAlreadySaved($film)) continue;
 
                 $filmHtml = $this->_retrieveFilmSingleHtml($film['id']);
                 $this->_storeFilmSingleHtml($filmHtml, $film['id']);
                 $filmObject = $this->parseFilmSingle($filmHtml, $film);
+
+                // Let's save the film image in the filesystem
+                $this->saveFilmImage($filmObject);
 
                 // Let's store in the DB
                 $db = new Database(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
@@ -95,6 +42,25 @@ class Scraper {
             }
 
         }
+
+    }
+
+    public function isFilmAlreadySaved($film) {
+
+        // We won't save the film in the DB if it's already saved
+        $query = "SELECT id FROM films WHERE id = '" . $film['id'] . "'";
+        $alternateDb = new Database(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
+        $result = Functions::selectDB($alternateDb, $query);
+        $film = $alternateDb->fetch_array_assoc($result);
+        return $film;
+    }
+
+    public function saveFilmImage($film) {
+
+        $image = Functions::getURL($film['image']);
+        $pathToFilmImagesDir = dirname(SCRAPER_ROOT_PATH) . '/public/img/films/';
+        $filmImageFileName = $pathToFilmImagesDir . $film['id'] . '.jpg';
+        file_put_contents($filmImageFileName, $image);
 
     }
 
@@ -349,12 +315,13 @@ class Scraper {
         // First char (to avoid having all films stored in the same folder)
         $firstChar = $id[0];
 
-        $url = "http://www.filmaffinity.com/es/film" . $id . ".html";
+        $url = "https://www.filmaffinity.com/es/film" . $id . ".html";
 
         $pageSingleFilmPath = SCRAPER_ROOT_PATH . "/htmls/films/" . $firstChar . "/" . $id . ".html";
         if (file_exists($pageSingleFilmPath)) {
             $filmHtml = file_get_contents($pageSingleFilmPath);
         } else {
+            sleep(5);
             $filmHtml = Functions::getURL($url, array());
         }
 
@@ -366,8 +333,16 @@ class Scraper {
 
         // We'll save the HTMLs for if future additional parsing is needed
         $firstChar = $id[0];
-        $pageSingleFilmPath = SCRAPER_ROOT_PATH . "/htmls/films/" . $firstChar . "/" . $id . ".html";
+        $pageSingleFilmDirectoryPath = SCRAPER_ROOT_PATH . "/htmls/films/" . $firstChar;
+        $pageSingleFilmPath = $pageSingleFilmDirectoryPath . "/" . $id . ".html";
         if (!file_exists($pageSingleFilmPath)) {
+
+            // We create the directory if it doesn't exist
+            if (!file_exists($pageSingleFilmDirectoryPath)) {
+                mkdir($pageSingleFilmDirectoryPath, 0777, true);
+            }
+
+            // We save the HTML
             file_put_contents($pageSingleFilmPath, $filmHtml);
         }
 
@@ -489,7 +464,7 @@ class Scraper {
             $pageFilms = $this->_retrieveFilmListPage($page);
 
             // Exit the loop when there's empty return
-            if (trim($pageFilms)=="") break;
+            if (trim($pageFilms) == "" || trim($pageFilms) == '<li class="no-movies">No hay películas con los filtros seleccionados</li>') break;
 
             $this->_storeHtmlFilmListPage($pageFilms, $page);
 
@@ -498,12 +473,14 @@ class Scraper {
 
         }
 
+        return $page;
+
     }
 
     private function _retrieveFilmListPage($page, $yearInit = false, $yearEnd = false) {
 
         // No documentaries nor TV series
-        $baseUrl = "http://www.filmaffinity.com/es/topgen.php?nodoc&notvse";
+        $baseUrl = "https://www.filmaffinity.com/es/topgen.php?nodoc&notvse";
         if ($yearInit && $yearEnd) $baseUrl .= "&fromyear=" . $yearInit . "&toyear=" . $yearEnd;
         $numElementsPerPage = 30;
 
@@ -532,8 +509,11 @@ class Scraper {
     private function _parseFilmListPage($pageFilms) {
 
         $filmsPage = array();
+        $pageFilms = '<ul id="root">' . $pageFilms . '</ul>';
         $html = str_get_html($pageFilms);
-        foreach($html->find('.fa-shadow') as $filmHtml) {
+        foreach($html->find('#root', 0)->children() as $index => $filmHtml) {
+
+            if (!$filmHtml->find('.position', 0)) continue;
 
             $film = array();
             $film['position'] = $filmHtml->find('.position', 0)->plaintext;
