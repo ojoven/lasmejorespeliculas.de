@@ -125,6 +125,9 @@ class Result extends Model {
         $result['films'] = array();
         if (isset($filmIds) && $filmIds) {
             $result['films'] = Film::orderBy('rating', 'desc')->find($filmIds)->toArray();
+            foreach ($result['films'] as &$film) {
+                $film['image'] = '/img/films/' . $film['id'] . '.jpg';
+            }
         }
 
         $result['text_twitter'] = "Las mejores películas de " . $name . " | Project by @ojoven, powered by Filmaffinity";

@@ -321,7 +321,7 @@ class Scraper {
         if (file_exists($pageSingleFilmPath)) {
             $filmHtml = file_get_contents($pageSingleFilmPath);
         } else {
-            sleep(5);
+            sleep(3);
             $filmHtml = Functions::getURL($url, array());
         }
 
